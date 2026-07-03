@@ -1,0 +1,135 @@
+/* RESET ESPECÍFICO DO LOGIN */
+html, body {
+  height: 100%;
+}
+
+/* FUNDO EM TELA CHEIA */
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+
+  background-image: url("../img/bg-burger.png");
+  background-size: cover;          /* 🔥 tela cheia */
+  background-position: center;     /* centraliza */
+  background-repeat: no-repeat;
+}
+
+/* OVERLAY PARA CONTRASTE */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);  /* 🔥 escurece o fundo */
+  z-index: 0;
+}
+
+/* CONTAINER GERAL */
+.login-wrapper {
+  position: relative;
+  z-index: 1;
+
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+
+  padding: 24px;
+}
+
+/* CABEÇALHO */
+.login-header {
+  text-align: center;
+  color: #fff;                     /* 🔥 CONTRASTE */
+}
+
+.login-logo {
+  width: 82px;
+  height: 82px;
+  margin: 0 auto 12px;
+
+  background: #ff5a00;
+  color: #fff;
+  border-radius: 16px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 72px; /* 🔥 tamanho maior ícone hamburguer tela login */
+}
+
+.login-header h1 {
+  margin: 0;
+  font-size: 26px;
+  font-weight: 700;
+}
+
+.login-header p {
+  margin: 6px 0 0;
+  font-size: 15px;
+  color: rgba(255,255,255,0.85);   /* 🔥 legível */
+}
+
+/* CARD */
+.login-card {
+  width: 100%;
+  max-width: 420px;
+
+  background: #fff;
+  border-radius: 16px;
+  padding: 28px;
+
+  box-shadow: 0 20px 40px rgba(0,0,0,0.25);
+}
+
+.login-card h2 {
+  margin-bottom: 20px;
+  text-transform: lowercase;
+}
+
+/* BOTÃO */
+.btn-login {
+  margin-top: 12px;
+  background: #ff5a00;
+  font-size: 16px;
+}
+
+.btn-login:hover {
+  filter: brightness(0.95);
+}
+
+/* TEXTO DE AJUDA */
+.login-hint {
+  margin-top: 16px;
+  text-align: center;
+  font-size: 14px;
+  color: #555;
+}
+
+/* FOOTER */
+.login-footer {
+  margin-top: 24px;
+  font-size: 13px;
+  color: rgba(255,255,255,0.8);    /* 🔥 CONTRASTE */
+  text-align: center;
+}
+/* Centraliza apenas o conteúdo do formulário */
+.login-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Centraliza o título */
+.login-card h2 {
+  text-align: center;
+  width: 100%;
+}
+
+/* Centraliza os campos mantendo largura controlada */
+.login-card .form {
+  width: 100%;
+  max-width: 320px;
+}
