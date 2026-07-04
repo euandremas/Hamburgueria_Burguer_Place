@@ -1,8 +1,15 @@
 const dashboardService = require("../services/dashboardService");
 const asyncHandler = require("../middlewares/asyncHandler");
 
-const getSummary = asyncHandler(async (req, res) => {
-  res.status(200).json({ success: true, data: await dashboardService.getSummary() });
+const getDashboard = asyncHandler(async (req, res) => {
+  const data = await dashboardService.getDashboard();
+
+  res.status(200).json({
+    success: true,
+    data
+  });
 });
 
-module.exports = { getSummary };
+module.exports = {
+  getDashboard
+};
