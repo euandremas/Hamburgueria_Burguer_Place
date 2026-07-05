@@ -18,6 +18,35 @@ const Admin = (() => {
   // pedidos: itens temporários do form
   let pendingItems = [];
 
+  function mapProductFromApi(product) {
+  return {
+    id: product.id,
+    tipo: product.type,
+    nome: product.name,
+    desc: product.description,
+    preco: Number(product.price),
+    imgDataUrl: product.imageUrl || "",
+  };
+}
+
+function mapProductToApi(product) {
+  return {
+    type: product.tipo,
+    name: product.nome,
+    description: product.desc,
+    price: product.preco,
+    imageUrl: product.imgDataUrl || null,
+  };
+}
+
+async function loadProdutosFromApi() {
+  const response = await API.getProducts();
+  s.produtos = (response.data || []).map(mapProductFromApi);
+
+  renderProdutos();
+  refreshOrderInputs();
+  refreshDashboard();
+}
   // ✅ NOVO: Mobile menu (protótipo)
   function setupMobileMenu() {
     const menuBtn = document.getElementById("menuToggle");
@@ -191,21 +220,21 @@ const Admin = (() => {
       .join("");
 
     tbody.querySelectorAll("[data-del-prod]").forEach((btn) => {
-      btn.addEventListener("click", () => {
-        const id = Number(btn.getAttribute("data-del-prod"));
-        const idx = s.produtos.findIndex((x) => x.id === id);
-        if (idx < 0) return;
+      btn.addEventListener("click", async () => {
+      const id = Number(btn.getAttribute("data-del-prod"));
+      const prod = s.produtos.find((x) => x.id === id);
+      if (!prod) return;
 
-        const prod = s.produtos[idx];
-        s.produtos.splice(idx, 1);
+      const confirmed = confirm(`Deseja excluir o produto "${prod.nome}"?`);
+      if (!confirmed) return;
 
-        Store.addActivity("new", "Produto removido", `Produto: ${prod.nome}`);
-        Store.save(); // ✅ persistência
-        UI.toast("Produto removido.");
-
-        renderProdutos();
-        refreshOrderInputs();
-        refreshDashboard();
+      try {
+      await API.deleteProduct(id);
+      UI.toast("Produto removido.");
+      await loadProdutosFromApi();
+      } catch (err) {
+      UI.toast(err.message || "Erro ao remover produto.");
+      }
       });
     });
   }
@@ -264,49 +293,47 @@ const Admin = (() => {
   }
 
   function setupProdutoForm() {
-    const form = document.getElementById("formProduto");
-    if (!form) return;
+  const form = document.getElementById("formProduto");
+  if (!form) return;
 
-    form.addEventListener("submit", (e) => {
-      e.preventDefault();
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
 
-      const tipo = document.getElementById("pTipo").value.trim();
-      const nome = document.getElementById("pNome").value.trim();
-      const preco = Number(document.getElementById("pPreco").value);
-      const desc = document.getElementById("pDesc").value.trim();
+    const tipo = document.getElementById("pTipo").value.trim();
+    const nome = document.getElementById("pNome").value.trim();
+    const preco = Number(document.getElementById("pPreco").value);
+    const desc = document.getElementById("pDesc").value.trim();
 
-      if (!tipo || !nome || !desc || !Number.isFinite(preco) || preco < 0) {
-        UI.toast("Preencha os campos corretamente.");
-        return;
-      }
+    if (!tipo || !nome || !desc || !Number.isFinite(preco) || preco <= 0) {
+      UI.toast("Preencha os campos corretamente.");
+      return;
+    }
 
-      const p = {
-        id: s.seq.produto++,
-        tipo,
-        nome,
-        preco,
-        desc,
-        imgDataUrl: currentProductImgDataUrl,
-      };
+    try {
+      await API.createProduct(
+        mapProductToApi({
+          tipo,
+          nome,
+          preco,
+          desc,
+          imgDataUrl: currentProductImgDataUrl,
+        })
+      );
 
-      s.produtos.unshift(p);
-
-      Store.addActivity("new", "Produto cadastrado", `Produto: ${nome}`);
-      Store.save(); // ✅ persistência
       UI.toast("Produto cadastrado!");
 
-      // reset
       form.reset();
       currentProductImgDataUrl = "";
+
       const pv = document.getElementById("dropPreview");
       if (pv) pv.innerHTML = "";
 
-      renderProdutos();
-      refreshOrderInputs();
-      refreshDashboard();
-    });
-  }
-
+      await loadProdutosFromApi();
+    } catch (err) {
+      UI.toast(err.message || "Erro ao cadastrar produto.");
+    }
+  });
+}
   // ---------- CLIENTES (NOVO + BRASILAPI + MÁSCARA TELEFONE) ----------
   function setupClientes() {
     setupCepLookup();
@@ -979,8 +1006,8 @@ function renderClientes() {
     setupOrderForm();
     setupDarkMode();
 
-    renderProdutos();
-    renderClientes(); // ✅ NOVO
+    loadProdutosFromApi();
+    renderClientes();
     renderUsuarios();
 
     refreshOrderInputs();
