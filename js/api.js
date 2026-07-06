@@ -99,7 +99,23 @@ const API = {
       method: "DELETE",
     });
   },
+// USUÁRIOS
+getUsers() {
+  return request("/users");
+},
 
+createUser(user) {
+  return request("/users", {
+    method: "POST",
+    body: JSON.stringify(user),
+  });
+},
+
+deleteUser(id) {
+  return request(`/users/${id}`, {
+    method: "DELETE",
+  });
+},
  // PEDIDOS
 getOrders() {
   return request("/orders");

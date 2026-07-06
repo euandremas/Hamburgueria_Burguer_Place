@@ -373,63 +373,78 @@
         </div>
       </section>
 
-      <!-- USUÁRIOS -->
-      <section class="view" id="view-usuarios">
-        <header class="pageHead">
-          <h1>Usuários</h1>
-          <p>Gerenciar os usuários do sistema</p>
-        </header>
+     <!-- USUÁRIOS -->
+<section class="view" id="view-usuarios">
+  <header class="pageHead">
+    <h1>Usuários</h1>
+    <p>Gerenciar os usuários do sistema</p>
+  </header>
 
-        <div class="grid2">
-          <section class="panel">
-            <h2><span class="plus">+</span> Novo usuário</h2>
+  <div class="grid2">
+    <section class="panel">
+      <h2><span class="plus">+</span> Novo usuário</h2>
 
-            <form id="formUsuario" class="form">
-              <label class="field">
-                <span>Nome Completo</span>
-                <input id="uNome" type="text" placeholder="Ex: João Silva" required />
-              </label>
+      <form id="formUsuario" class="form">
+        <label class="field">
+          <span>Nome Completo</span>
+          <input id="uNome" type="text" placeholder="Ex: João Silva" required />
+        </label>
 
-              <label class="field">
-                <span>Usuário</span>
-                <div class="inline">
-                  <input id="uUser" type="text" placeholder="joao.silva" required />
-                  <button id="btnCheckUser" class="btnGhost" type="button" aria-label="Verificar disponibilidade do usuário">
-                    Verificar
-                  </button>
-                </div>
-                <small id="userHint" class="hint">Sugestão automática baseada no nome. Você pode editar.</small>
-              </label>
+        <label class="field">
+          <span>Usuário</span>
+          <div class="inline">
+            <input id="uUser" type="text" placeholder="joao.silva" required />
+            <button id="btnCheckUser" class="btnGhost" type="button">
+              Verificar
+            </button>
+          </div>
+          <small id="userHint" class="hint">Sugestão automática baseada no nome. Você pode editar.</small>
+        </label>
 
-              <label class="field">
-                <span>Senha</span>
-                <input id="uSenha" type="password" minlength="6" placeholder="Mínimo 6 caracteres" required />
-              </label>
+        <label class="field">
+          <span>Senha</span>
+          <div class="passwordActions">
+            <div class="passwordField">
+              <input id="uSenha" type="password" minlength="6" placeholder="Mínimo 6 caracteres" required />
 
-              <button class="btnPrimary" type="submit">
-                <span class="btnIco">+</span> Usuário
+              <button type="button" class="togglePassword" data-target="uSenha" title="Mostrar senha" aria-label="Mostrar senha">
+                <svg class="eyeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"></path>
+                  <circle cx="12" cy="12" r="3"></circle>
+                </svg>
               </button>
-            </form>
-          </section>
-
-          <section class="panel">
-            <h2>Usuários Cadastrados (<span id="userCount">0</span>)</h2>
-
-            <div class="tableWrap">
-              <table class="table" id="tableUsuarios">
-                <thead>
-                  <tr>
-                    <th>Nome</th>
-                    <th>Usuário</th>
-                    <th class="right">Ações</th>
-                  </tr>
-                </thead>
-                <tbody></tbody>
-              </table>
             </div>
-          </section>
-        </div>
-      </section>
+
+            <button id="btnGeneratePassword" type="button" class="btnGhost">
+              Gerar
+            </button>
+          </div>
+        </label>
+
+        <button class="btnPrimary" type="submit">
+          <span class="btnIco">+</span> Usuário
+        </button>
+      </form>
+    </section>
+
+    <section class="panel">
+      <h2>Usuários Cadastrados (<span id="userCount">0</span>)</h2>
+
+      <div class="tableWrap">
+        <table class="table" id="tableUsuarios">
+          <thead>
+            <tr>
+              <th>Nome</th>
+              <th>Usuário</th>
+              <th class="right">Ações</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+</section>
 
       <!-- PEDIDOS -->
       <section class="view" id="view-pedidos">

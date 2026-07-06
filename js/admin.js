@@ -651,45 +651,107 @@ function renderClientes() {
   }
 
   // ---------- USUÁRIOS ----------
-  function renderUsuarios() {
-    document.getElementById("userCount").textContent = String(s.usuarios.length);
+  function mapUserFromApi(user) {
 
-    const tbody = document.querySelector("#tableUsuarios tbody");
-    if (!tbody) return;
+  return {
 
-    tbody.innerHTML = s.usuarios
-      .map(
-        (u) => `
-      <tr>
-        <td><strong>${UI.escapeHtml(u.nome)}</strong></td>
-        <td>${UI.escapeHtml(u.username)}</td>
-        <td class="right">
-          <button class="iconBtn" data-del-user="${u.id}" title="Excluir">🗑</button>
-        </td>
-      </tr>
-    `
-      )
-      .join("");
+    id: user.id,
 
-    tbody.querySelectorAll("[data-del-user]").forEach((btn) => {
-      btn.addEventListener("click", () => {
-        const id = Number(btn.getAttribute("data-del-user"));
+    nome: user.name,
 
-        const idx = s.usuarios.findIndex((x) => x.id === id);
-        if (idx < 0) return;
+    username: user.username,
 
-        const u = s.usuarios[idx];
-        s.usuarios.splice(idx, 1);
+    role: user.role,
 
-        Store.addActivity("new", "Usuário removido", `Usuário: ${u.username}`);
-        Store.save(); // ✅ persistência
+    createdAt: user.createdAt,
+
+  };
+
+}
+
+async function loadUsuariosFromApi() {
+
+  const response = await API.getUsers();
+
+  s.usuarios = (response.data || []).map(mapUserFromApi);
+
+  renderUsuarios();
+
+  refreshDashboard();
+
+}
+
+function renderUsuarios() {
+
+  const users = s.usuarios || [];
+
+  document.getElementById("userCount").textContent = String(users.length);
+
+  const tbody = document.querySelector("#tableUsuarios tbody");
+
+  if (!tbody) return;
+
+  tbody.innerHTML = users
+
+    .map(
+
+      (u) => `
+
+        <tr>
+
+          <td><strong>${UI.escapeHtml(u.nome)}</strong></td>
+
+          <td>${UI.escapeHtml(u.username)}</td>
+
+          <td class="right">
+
+            <button class="iconBtn" data-del-user="${u.id}" title="Excluir">🗑</button>
+
+          </td>
+
+        </tr>
+
+      `
+
+    )
+
+    .join("");
+
+
+
+  tbody.querySelectorAll("[data-del-user]").forEach((btn) => {
+
+    btn.addEventListener("click", async () => {
+
+      const id = Number(btn.getAttribute("data-del-user"));
+
+      const user = users.find((x) => x.id === id);
+
+      if (!user) return;
+
+      const confirmed = confirm(`Deseja excluir o usuário "${user.username}"?`);
+
+      if (!confirmed) return;
+
+      try {
+
+        await API.deleteUser(id);
+
         UI.toast("Usuário removido.");
 
-        renderUsuarios();
-        refreshDashboard();
-      });
+        await loadUsuariosFromApi();
+
+      } catch (err) {
+
+        UI.toast(err.message || "Erro ao remover usuário.");
+
+      }
+
     });
-  }
+
+  });
+
+}
 
   function setupUserSuggest() {
     const nome = document.getElementById("uNome");
@@ -719,11 +781,8 @@ function renderClientes() {
       }
 
       user.value = val; // normaliza
-      const ok = Store.isUsernameAvailable(val);
-
-      hint.textContent = ok ? "✅ Usuário disponível." : "❌ Usuário indisponível. Tente outro.";
-      hint.style.color = ok ? "var(--green)" : "var(--danger)";
-      UI.toast(ok ? "Usuário disponível." : "Usuário indisponível.");
+      hint.textContent = "A disponibilidade será validada ao cadastrar.";
+hint.style.color = "var(--muted)";
     });
 
     user.addEventListener("input", () => {
@@ -733,43 +792,41 @@ function renderClientes() {
   }
 
   function setupUsuarioForm() {
-    const form = document.getElementById("formUsuario");
-    if (!form) return;
+  const form = document.getElementById("formUsuario");
+  if (!form) return;
 
-    form.addEventListener("submit", (e) => {
-      e.preventDefault();
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
 
-      const nome = document.getElementById("uNome").value.trim();
-      const username = Store.slugifyUser(document.getElementById("uUser").value.trim());
-      const senha = document.getElementById("uSenha").value;
+    const name = document.getElementById("uNome").value.trim();
+    const username = document.getElementById("uUser").value.trim();
+    const password = document.getElementById("uSenha").value;
+    const role = document.getElementById("uRole")?.value || "operator";
 
-      if (!nome || !username || !senha || senha.length < 6) {
-        UI.toast("Preencha corretamente. Senha mín. 6.");
-        return;
-      }
-      if (!Store.isUsernameAvailable(username)) {
-        UI.toast("Usuário indisponível. Escolha outro.");
-        return;
-      }
+    if (!name || !username || password.length < 6) {
+      UI.toast("Preencha corretamente.");
+      return;
+    }
 
-      s.usuarios.unshift({ id: s.seq.usuario++, nome, username, senha });
+    try {
+      await API.createUser({
+        name,
+        username,
+        password,
+        role,
+      });
 
-      Store.addActivity("new", "Novo usuário cadastrado", `Usuário: ${username}`);
-      Store.save(); // ✅ persistência
       UI.toast("Usuário cadastrado!");
 
       form.reset();
 
-      const hint = document.getElementById("userHint");
-      if (hint) {
-        hint.textContent = "Sugestão automática baseada no nome. Você pode editar.";
-        hint.style.color = "var(--muted)";
-      }
+      await loadUsuariosFromApi();
 
-      renderUsuarios();
-      refreshDashboard();
-    });
-  }
+    } catch (err) {
+      UI.toast(err.message || "Erro ao cadastrar usuário.");
+    }
+  });
+}
 
   // ---------- PEDIDOS ----------
   function refreshOrderInputs() {
@@ -1054,9 +1111,26 @@ function renderClientes() {
    loadProdutosFromApi();
    loadClientesFromApi();
 
-   renderUsuarios();
+   loadUsuariosFromApi();
    loadOrdersFromApi();
   }
 
   return { init };
 })();
+const btnGeneratePassword = document.getElementById("btnGeneratePassword");
+
+btnGeneratePassword?.addEventListener("click", () => {
+
+    const chars =
+        "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789!@#$%&*";
+
+    let password = "";
+
+    for (let i = 0; i < 12; i++) {
+        password += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+
+    document.getElementById("uSenha").value = password;
+
+    UI.toast("Senha gerada.");
+});
