@@ -793,7 +793,107 @@ hint.style.color = "var(--muted)";
 
   function setupUsuarioForm() {
   const form = document.getElementById("formUsuario");
+  const passwordInput = document.getElementById("uSenha");
+  const capsWarning = document.getElementById("capsLockWarning");
   if (!form) return;
+
+  document.getElementById("btnGeneratePassword")?.addEventListener("click", () => {
+    const upper = "ABCDEFGHJKLMNPQRSTUVWXYZ";
+    const lower = "abcdefghijkmnopqrstuvwxyz";
+    const numbers = "23456789";
+    const special = "!@#$%&*";
+    const all = upper + lower + numbers + special;
+
+    let password =
+      upper[Math.floor(Math.random() * upper.length)] +
+      lower[Math.floor(Math.random() * lower.length)] +
+      numbers[Math.floor(Math.random() * numbers.length)] +
+      special[Math.floor(Math.random() * special.length)];
+
+    while (password.length < 12) {
+      password += all[Math.floor(Math.random() * all.length)];
+    }
+
+    password = password
+      .split("")
+      .sort(() => Math.random() - 0.5)
+      .join("");
+
+    const input = document.getElementById("uSenha");
+
+if (input) {
+  input.value = password;
+  input.dispatchEvent(new Event("input"));
+}
+
+UI.toast("Senha forte gerada.");
+  });
+document.getElementById("btnCopyPassword")?.addEventListener("click", async () => {
+  const input = document.getElementById("uSenha");
+  const password = input?.value || "";
+
+  if (!password) {
+    UI.toast("Gere ou digite uma senha primeiro.");
+    return;
+  }
+
+  try {
+    await navigator.clipboard.writeText(password);
+    UI.toast("Senha copiada.");
+  } catch {
+    UI.toast("Não foi possível copiar a senha.");
+  }
+});
+const senhaInput = document.getElementById("uSenha");
+
+senhaInput?.addEventListener("input", () => {
+  const value = senhaInput.value || "";
+
+  const rules = {
+    length: value.length >= 8,
+    upper: /[A-Z]/.test(value),
+    lower: /[a-z]/.test(value),
+    number: /\d/.test(value),
+    special: /[!@#$%&*]/.test(value),
+  };
+
+  document.getElementById("ruleLength")?.classList.toggle("is-valid", rules.length);
+  document.getElementById("ruleUpper")?.classList.toggle("is-valid", rules.upper);
+  document.getElementById("ruleLower")?.classList.toggle("is-valid", rules.lower);
+  document.getElementById("ruleNumber")?.classList.toggle("is-valid", rules.number);
+  document.getElementById("ruleSpecial")?.classList.toggle("is-valid", rules.special);
+
+  const score = Object.values(rules).filter(Boolean).length;
+  const bar = document.getElementById("passwordStrengthBar");
+  const text = document.getElementById("passwordStrengthText");
+
+ if (bar) {
+  bar.style.width = `${score * 20}%`;
+
+  if (score <= 2) {
+    bar.style.background = "#ef4444";
+  } else if (score <= 4) {
+    bar.style.background = "#f59e0b";
+  } else {
+    bar.style.background = "#22c55e";
+  }
+}
+  if (text) {
+    text.textContent =
+      score <= 2
+        ? "Força da senha: fraca"
+        : score <= 4
+          ? "Força da senha: média"
+          : "Força da senha: forte";
+  }
+});
+
+passwordInput?.addEventListener("keyup", (e) => {
+  if (!capsWarning) return;
+
+  capsWarning.style.display =
+    e.getModifierState("CapsLock") ? "block" : "none";
+});
 
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -803,10 +903,17 @@ hint.style.color = "var(--muted)";
     const password = document.getElementById("uSenha").value;
     const role = document.getElementById("uRole")?.value || "operator";
 
-    if (!name || !username || password.length < 6) {
-      UI.toast("Preencha corretamente.");
-      return;
-    }
+    const senhaValida =
+  password.length >= 8 &&
+  /[A-Z]/.test(password) &&
+  /[a-z]/.test(password) &&
+  /\d/.test(password) &&
+  /[!@#$%&*]/.test(password);
+
+if (!name || !username || !senhaValida) {
+  UI.toast("A senha deve atender todos os requisitos.");
+  return;
+}
 
     try {
       await API.createUser({
@@ -820,8 +927,28 @@ hint.style.color = "var(--muted)";
 
       form.reset();
 
-      await loadUsuariosFromApi();
+      const strengthBar = document.getElementById("passwordStrengthBar");
+const strengthText = document.getElementById("passwordStrengthText");
 
+if (strengthBar) {
+  strengthBar.style.width = "0%";
+  strengthBar.style.background = "#ef4444";
+}
+
+if (strengthText) {
+  strengthText.textContent = "Força da senha: fraca";
+}
+[
+  "ruleLength",
+  "ruleUpper",
+  "ruleLower",
+  "ruleNumber",
+  "ruleSpecial",
+].forEach((id) => {
+  document.getElementById(id)?.classList.remove("is-valid");
+});
+
+      await loadUsuariosFromApi();
     } catch (err) {
       UI.toast(err.message || "Erro ao cadastrar usuário.");
     }
@@ -1117,20 +1244,3 @@ hint.style.color = "var(--muted)";
 
   return { init };
 })();
-const btnGeneratePassword = document.getElementById("btnGeneratePassword");
-
-btnGeneratePassword?.addEventListener("click", () => {
-
-    const chars =
-        "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789!@#$%&*";
-
-    let password = "";
-
-    for (let i = 0; i < 12; i++) {
-        password += chars.charAt(Math.floor(Math.random() * chars.length));
-    }
-
-    document.getElementById("uSenha").value = password;
-
-    UI.toast("Senha gerada.");
-});

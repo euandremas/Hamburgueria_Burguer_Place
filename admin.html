@@ -415,8 +415,31 @@
               </button>
             </div>
 
+            <div class="passwordStrength">
+  <div class="passwordStrength__bar">
+    <span id="passwordStrengthBar"></span>
+  </div>
+
+  <small id="passwordStrengthText" class="hint">Força da senha: fraca</small>
+
+  <ul class="passwordRules">
+    <li id="ruleLength">Mínimo 8 caracteres</li>
+    <li id="ruleUpper">Letra maiúscula</li>
+    <li id="ruleLower">Letra minúscula</li>
+    <li id="ruleNumber">Número</li>
+    <li id="ruleSpecial">Caractere especial</li>
+  </ul>
+</div>
+  <small id="capsLockWarning" class="hint" style="display:none; color:#ef4444;">
+  Caps Lock está ativado.
+</small>
+
             <button id="btnGeneratePassword" type="button" class="btnGhost">
               Gerar
+            </button>
+
+            <button id="btnCopyPassword" type="button" class="btnGhost">
+              Copiar
             </button>
           </div>
         </label>
