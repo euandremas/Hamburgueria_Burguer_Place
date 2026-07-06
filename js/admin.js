@@ -47,6 +47,71 @@ async function loadProdutosFromApi() {
   refreshOrderInputs();
   refreshDashboard();
 }
+function mapCustomerFromApi(customer) {
+  return {
+    id: customer.id,
+    nome: customer.name,
+    tel: customer.phone || "",
+    email: customer.email,
+    endereco: {
+      cep: customer.zipCode,
+      rua: customer.street,
+      bairro: customer.neighborhood,
+      cidade: customer.city,
+      uf: customer.state,
+      numero: customer.number,
+    },
+    createdAt: customer.createdAt,
+  };
+}
+
+function mapCustomerToApi(customer) {
+  return {
+    name: customer.nome,
+    phone: customer.tel || null,
+    email: customer.email,
+    zipCode: customer.endereco.cep,
+    street: customer.endereco.rua,
+    neighborhood: customer.endereco.bairro,
+    city: customer.endereco.cidade,
+    state: customer.endereco.uf,
+    number: customer.endereco.numero,
+  };
+}
+
+async function loadClientesFromApi() {
+  const response = await API.getCustomers();
+
+  s.clientes = (response.data || []).map(mapCustomerFromApi);
+
+  renderClientes();
+  refreshOrderInputs();
+  refreshDashboard();
+}
+function mapOrderFromApi(order) {
+  return {
+    id: order.id,
+    clienteId: order.customerId,
+    status: order.status,
+    etaMin: order.etaMin,
+    createdAt: order.createdAt,
+    timeLabel: Store.nowTime(),
+    itens: (order.items || []).map((item) => ({
+      produtoId: item.productId,
+      nome: item.productName,
+      preco: Number(item.unitPrice),
+      qtd: item.quantity,
+    })),
+  };
+}
+
+async function loadOrdersFromApi() {
+  const response = await API.getOrders();
+  s.pedidos = (response.data || []).map(mapOrderFromApi);
+
+  renderOrders();
+  refreshDashboard();
+}
   // ✅ NOVO: Mobile menu (protótipo)
   function setupMobileMenu() {
     const menuBtn = document.getElementById("menuToggle");
@@ -124,9 +189,8 @@ async function loadProdutosFromApi() {
     }
 
     if (name === "clientes") {
-      renderClientes();
-      refreshOrderInputs(); // garante select de pedidos atualizado
-    }
+    loadClientesFromApi();
+}
 
     if (name === "dashboard") {
       refreshDashboard();
@@ -336,11 +400,10 @@ async function loadProdutosFromApi() {
 }
   // ---------- CLIENTES (NOVO + BRASILAPI + MÁSCARA TELEFONE) ----------
   function setupClientes() {
-    setupCepLookup();
-    setupTelefoneMask(); // ✅ NOVO: máscara telefone
-    setupClienteForm();
-    renderClientes();
-  }
+  setupCepLookup();
+  setupTelefoneMask();
+  setupClienteForm();
+}
 
   // --- ✅ MÁSCARA TELEFONE (11) 99999-9999 ---
   function setupTelefoneMask() {
@@ -400,102 +463,92 @@ function renderClientes() {
       .join("");
 
     tbody.querySelectorAll("[data-del-cli]").forEach((btn) => {
-      btn.addEventListener("click", () => {
-        const id = Number(btn.getAttribute("data-del-cli"));
-        const idx = (s.clientes || []).findIndex((x) => x.id === id);
-        if (idx < 0) return;
+      btn.addEventListener("click", async () => {
+  const id = Number(btn.getAttribute("data-del-cli"));
+  const cli = (s.clientes || []).find((x) => x.id === id);
+  if (!cli) return;
 
-        // bloqueia se houver pedidos com esse cliente
-        const hasOrders = s.pedidos.some((o) => o.clienteId === id);
-        if (hasOrders) {
-          UI.toast("Não é possível excluir: cliente possui pedidos.");
-          return;
-        }
+  const confirmed = confirm(`Deseja excluir o cliente "${cli.nome}"?`);
+  if (!confirmed) return;
 
-        const cli = s.clientes[idx];
-        s.clientes.splice(idx, 1);
-
-        Store.addActivity("new", "Cliente removido", `Cliente: ${cli.nome}`);
-        Store.save();
-        UI.toast("Cliente removido.");
-
-        renderClientes();
-        refreshOrderInputs();
-        refreshDashboard();
-      });
-    });
-  }
+  try {
+    await API.deleteCustomer(id);
+    UI.toast("Cliente removido.");
+    await loadClientesFromApi();
+  } catch (err) {
+  UI.toast(err.message || "Erro ao remover cliente.");
+}
+});
+});
+}
 
   function setupClienteForm() {
-    const form = document.getElementById("formCliente");
-    if (!form) return;
+  const form = document.getElementById("formCliente");
+  if (!form) return;
 
-    form.addEventListener("submit", async (e) => {
-      e.preventDefault();
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
 
-      const nome = document.getElementById("cNome").value.trim();
-      const tel = document.getElementById("cTel").value.trim();
-      const email = document.getElementById("cEmail").value.trim();
+    const nome = document.getElementById("cNome").value.trim();
+    const tel = document.getElementById("cTel").value.trim();
+    const email = document.getElementById("cEmail").value.trim();
 
-      const cepRaw = document.getElementById("cCep").value;
-      const cepDigits = onlyDigits(cepRaw);
+    const cepRaw = document.getElementById("cCep").value;
+    const cepDigits = onlyDigits(cepRaw);
 
-      const numero = document.getElementById("cNumero").value.trim();
+    const numero = document.getElementById("cNumero").value.trim();
 
-      if (!nome || !email) {
-        UI.toast("Preencha nome e e-mail.");
-        return;
-      }
+    if (!nome || !email) {
+      UI.toast("Preencha nome e e-mail.");
+      return;
+    }
 
-      if (cepDigits.length !== 8) {
-        UI.toast("Informe um CEP válido (8 dígitos).");
-        return;
-      }
+    if (cepDigits.length !== 8) {
+      UI.toast("Informe um CEP válido (8 dígitos).");
+      return;
+    }
 
-      // garante que endereço foi preenchido (ou tenta preencher)
-      if (!document.getElementById("cCidade").value || !document.getElementById("cUf").value) {
-        const ok = await fetchCepAndFill();
-        if (!ok) return;
-      }
+    if (!document.getElementById("cCidade").value || !document.getElementById("cUf").value) {
+      const ok = await fetchCepAndFill();
+      if (!ok) return;
+    }
 
-      if (!numero) {
-        UI.toast("Preencha o número do endereço.");
-        return;
-      }
+    if (!numero) {
+      UI.toast("Preencha o número do endereço.");
+      return;
+    }
 
-      const endereco = {
-        cep: formatCep(cepRaw),
-        rua: document.getElementById("cRua").value.trim(),
-        bairro: document.getElementById("cBairro").value.trim(),
-        cidade: document.getElementById("cCidade").value.trim(),
-        uf: document.getElementById("cUf").value.trim(),
-        numero,
-      };
+    const endereco = {
+      cep: formatCep(cepRaw),
+      rua: document.getElementById("cRua").value.trim(),
+      bairro: document.getElementById("cBairro").value.trim(),
+      cidade: document.getElementById("cCidade").value.trim(),
+      uf: document.getElementById("cUf").value.trim(),
+      numero,
+    };
 
-      const c = {
-        id: s.seq.cliente++,
-        nome,
-        tel,
-        email,
-        endereco,
-        createdAt: Date.now(),
-      };
+    const customer = {
+      nome,
+      tel,
+      email,
+      endereco,
+    };
 
-      s.clientes.unshift(c);
+    try {
+      await API.createCustomer(mapCustomerToApi(customer));
 
-      Store.addActivity("new", "Cliente cadastrado", `Cliente: ${nome}`);
-      Store.save();
       UI.toast("Cliente cadastrado!");
 
       form.reset();
       clearAddressFields();
       setCepHint("Digite o CEP e clique em Buscar. Endereço vem automático 😎", "muted");
 
-      renderClientes();
-      refreshOrderInputs();
-      refreshDashboard();
-    });
-  }
+      await loadClientesFromApi();
+    } catch (err) {
+      UI.toast(err.message || "Erro ao cadastrar cliente.");
+    }
+  });
+}
 
   // --- CEP helpers ---
   function onlyDigits(str) {
@@ -813,7 +866,7 @@ function renderClientes() {
 
     list.innerHTML = s.pedidos
       .slice()
-      .sort((a, b) => b.id - a.id)
+      .sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt))
       .map((o) => {
         const key = statusKey(o.status);
         const cls =
@@ -870,92 +923,83 @@ function renderClientes() {
 
     // status buttons
     list.querySelectorAll("[data-status]").forEach((btn) => {
-      btn.addEventListener("click", () => {
+      btn.addEventListener("click", async () => {
         const id = Number(btn.getAttribute("data-status"));
         const to = btn.getAttribute("data-to");
         const o = s.pedidos.find((x) => x.id === id);
         if (!o) return;
 
-        o.status = to;
+        try {
+  await API.updateOrderStatus(id, to);
 
-        Store.addActivity(
-          to === "Entregue" ? "done" : to === "Em preparação" ? "prep" : "new",
-          `Pedido #${String(id).padStart(3, "0")} ${to.toLowerCase()}`,
-          `Atualizado agora`
-        );
+  UI.toast("Status atualizado!");
 
-        Store.save(); // ✅ persistência
-        UI.toast("Status atualizado!");
-        renderOrders();
-        refreshDashboard();
+  await loadOrdersFromApi();
+} catch (err) {
+  UI.toast(err.message || "Erro ao atualizar status.");
+}
       });
     });
 
     // ETA input
     list.querySelectorAll(".etaInput").forEach((inp) => {
-      inp.addEventListener("change", () => {
+      inp.addEventListener("change", async () => {
         const id = Number(inp.getAttribute("data-eta"));
         const o = s.pedidos.find((x) => x.id === id);
         if (!o) return;
 
         const newEta = Math.max(1, Number(inp.value || 1));
-        o.etaMin = newEta;
+        try {
+        await API.updateOrderEta(id, newEta);
 
-        Store.addActivity("prep", "ETA atualizado", `Pedido #${String(id).padStart(3, "0")} — ${newEta} min`);
-        Store.save(); // ✅ persistência
         UI.toast("ETA atualizado!");
 
-        refreshDashboard();
+        await loadOrdersFromApi();
+}       catch (err) {
+        UI.toast(err.message || "Erro ao atualizar ETA.");
+}
       });
     });
   }
 
   function setupOrderForm() {
-    document.getElementById("btnAddItem")?.addEventListener("click", () => {
-      const sel = document.getElementById("oProduto");
-      const val = sel?.value;
-      if (!val) return;
-      addItemToPending(val);
-    });
+  document.getElementById("btnAddItem")?.addEventListener("click", () => {
+    const sel = document.getElementById("oProduto");
+    const val = sel?.value;
+    if (!val) return;
 
-    const form = document.getElementById("formPedido");
-    if (!form) return;
+    addItemToPending(val);
+  });
 
-    form.addEventListener("submit", (e) => {
-      e.preventDefault();
+  const form = document.getElementById("formPedido");
+  if (!form) return;
 
-      const clienteId = Number(document.getElementById("oCliente").value);
-      const etaMin = Math.max(1, Number(document.getElementById("oEta").value || 20));
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
 
-      if (!clienteId) {
-        UI.toast("Selecione um cliente.");
-        return;
-      }
-      if (!pendingItems.length) {
-        UI.toast("Adicione ao menos 1 produto.");
-        return;
-      }
+    const clienteId = Number(document.getElementById("oCliente").value);
+    const etaMin = Math.max(1, Number(document.getElementById("oEta").value || 20));
 
-      const id = s.seq.pedido++;
-      const o = {
-        id,
-        clienteId,
-        itens: pendingItems.map((i) => ({ ...i })),
-        status: "Em preparação",
+    if (!clienteId) {
+      UI.toast("Selecione um cliente.");
+      return;
+    }
+
+    if (!pendingItems.length) {
+      UI.toast("Adicione ao menos 1 produto.");
+      return;
+    }
+
+    try {
+      await API.createOrder({
+        customerId: clienteId,
         etaMin,
-        createdAt: Date.now(),
-        timeLabel: Store.nowTime(),
-      };
+        items: pendingItems.map((item) => ({
+          productId: item.produtoId,
+          quantity: item.qtd,
+        })),
+      });
 
-      s.pedidos.unshift(o);
-
-      Store.addActivity(
-        "new",
-        "Novo pedido",
-        `Cliente: ${(s.clientes || []).find((c) => c.id === clienteId)?.nome || "—"} — agora`
-      );
-
-      Store.save(); // ✅ persistência
       UI.toast("Pedido criado!");
 
       pendingItems = [];
@@ -965,11 +1009,12 @@ function renderClientes() {
       if (etaField) etaField.value = "20";
 
       refreshOrderInputs();
-      renderOrders();
-      refreshDashboard();
-    });
-  }
-
+      await loadOrdersFromApi();
+    } catch (err) {
+      UI.toast(err.message || "Erro ao criar pedido.");
+    }
+  });
+}
   // ---------- SETTINGS ----------
   function setupDarkMode() {
     const toggle = document.getElementById("darkToggle");
@@ -1006,13 +1051,11 @@ function renderClientes() {
     setupOrderForm();
     setupDarkMode();
 
-    loadProdutosFromApi();
-    renderClientes();
-    renderUsuarios();
+   loadProdutosFromApi();
+   loadClientesFromApi();
 
-    refreshOrderInputs();
-    renderOrders();
-    refreshDashboard();
+   renderUsuarios();
+   loadOrdersFromApi();
   }
 
   return { init };

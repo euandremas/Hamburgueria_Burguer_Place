@@ -16,6 +16,7 @@ async function main() {
 
   await prisma.user.createMany({
     data: [
+      { name: "Administrador", username: "admin", passwordHash, role: "admin"},
       { name: "Maria Oliveira", username: "maria.oliveira", passwordHash, role: "admin" },
       { name: "Pedro Santos", username: "pedro.santos", passwordHash, role: "admin" },
       { name: "Ana Silva", username: "ana.silva", passwordHash, role: "admin" }
@@ -35,10 +36,8 @@ async function main() {
   const xBacon = await prisma.product.create({ data: { type: "Hambúrguer", name: "X-Bacon", description: "Hambúrguer, bacon crocante, queijo cheddar, alface e tomate", price: 25.9 } });
   const xBurger = await prisma.product.create({ data: { type: "Hambúrguer", name: "X-Burger Especial", description: "Hambúrguer artesanal 180g, queijo suíço, cebola caramelizada e molho", price: 32.9 } });
   await prisma.product.create({ data: { type: "Hambúrguer", name: "X-Salada", description: "Hambúrguer, queijo, alface, tomate, cebola e maionese", price: 22.9 } });
-
-  await prisma.order.create({
-    data: {
-      id: 6,
+await prisma.order.create({
+  data: {
       customerId: maria.id,
       status: "Em preparação",
       etaMin: 25,
@@ -47,8 +46,7 @@ async function main() {
   });
 
   await prisma.order.create({
-    data: {
-      id: 7,
+  data: {
       customerId: pedro.id,
       status: "Em preparação",
       etaMin: 15,
@@ -57,8 +55,7 @@ async function main() {
   });
 
   await prisma.order.create({
-    data: {
-      id: 8,
+  data: {
       customerId: ana.id,
       status: "Entregue",
       etaMin: 0,
@@ -70,12 +67,24 @@ async function main() {
   });
 
   await prisma.activity.createMany({
-    data: [
-      { type: "done", title: "Pedido nº 008 entregue", subtitle: "Cliente: Ana Silva" },
-      { type: "prep", title: "Pedido #007 em preparação", subtitle: "Cliente: Pedro Santos" },
-      { type: "new", title: "Novo pedido", subtitle: "Cliente: Maria Oliveira" }
-    ]
-  });
+  data: [
+    {
+      type: "done",
+      title: "Pedido nº 003 entregue",
+      subtitle: "Cliente: Ana Silva"
+    },
+    {
+      type: "prep",
+      title: "Pedido nº 002 em preparação",
+      subtitle: "Cliente: Pedro Santos"
+    },
+    {
+      type: "new",
+      title: "Pedido nº 001 criado",
+      subtitle: "Cliente: Maria Oliveira"
+    }
+  ]
+});
 
   console.log("Seed concluído. Usuário demo: maria.oliveira / 123456");
 }

@@ -100,25 +100,37 @@ const API = {
     });
   },
 
-  // PEDIDOS
-  getOrders() {
-    return request("/orders");
-  },
+ // PEDIDOS
+getOrders() {
+  return request("/orders");
+},
 
-  createOrder(order) {
-    return request("/orders", {
-      method: "POST",
-      body: JSON.stringify(order),
-    });
-  },
+createOrder(order) {
+  return request("/orders", {
+    method: "POST",
+    body: JSON.stringify(order),
+  });
+},
 
-  updateOrder(id, order) {
-    return request(`/orders/${id}`, {
-      method: "PUT",
-      body: JSON.stringify(order),
-    });
-  },
+updateOrderStatus(id, status) {
+  return request(`/orders/${id}/status`, {
+    method: "PUT",
+    body: JSON.stringify({ status }),
+  });
+},
 
+updateOrderEta(id, etaMin) {
+  return request(`/orders/${id}/eta`, {
+    method: "PUT",
+    body: JSON.stringify({ etaMin }),
+  });
+},
+
+deleteOrder(id) {
+  return request(`/orders/${id}`, {
+    method: "DELETE",
+  });
+},
   // DASHBOARD
   getDashboard() {
     return request("/dashboard");
