@@ -373,31 +373,50 @@ async function loadOrdersFromApi() {
       return;
     }
 
-    try {
-      await API.createProduct(
-        mapProductToApi({
-          tipo,
-          nome,
-          preco,
-          desc,
-          imgDataUrl: currentProductImgDataUrl,
-        })
-      );
+    const btn = form.querySelector("button[type='submit']");
 
-      UI.toast("Produto cadastrado!");
-
-      form.reset();
-      currentProductImgDataUrl = "";
-
-      const pv = document.getElementById("dropPreview");
-      if (pv) pv.innerHTML = "";
-
-      await loadProdutosFromApi();
-    } catch (err) {
-      UI.toast(err.message || "Erro ao cadastrar produto.");
-    }
-  });
+if (btn) {
+  btn.disabled = true;
+  btn.dataset.text = btn.textContent;
+  btn.textContent = "Salvando...";
 }
+
+try {
+  UI.showLoading("Cadastrando produto...");
+
+  await API.createProduct(
+    mapProductToApi({
+      tipo,
+      nome,
+      preco,
+      desc,
+      imgDataUrl: currentProductImgDataUrl,
+    })
+  );
+
+  UI.toast("Produto cadastrado!");
+
+  form.reset();
+  currentProductImgDataUrl = "";
+
+  const pv = document.getElementById("dropPreview");
+  if (pv) pv.innerHTML = "";
+
+  await loadProdutosFromApi();
+} catch (err) {
+  UI.toast(err.message || "Erro ao cadastrar produto.");
+} finally {
+  UI.hideLoading();
+
+  if (btn) {
+    btn.disabled = false;
+    btn.textContent = btn.dataset.text || "Cadastrar";
+  }
+}
+
+  });
+}        // fecha o addEventListener
+
   // ---------- CLIENTES (NOVO + BRASILAPI + MÁSCARA TELEFONE) ----------
   function setupClientes() {
   setupCepLookup();
@@ -533,23 +552,37 @@ function renderClientes() {
       email,
       endereco,
     };
+      const btn = form.querySelector("button[type='submit']");
 
+if (btn) {
+  btn.disabled = true;
+  btn.dataset.text = btn.textContent;
+  btn.textContent = "Salvando...";
+}
     try {
-      await API.createCustomer(mapCustomerToApi(customer));
+  UI.showLoading("Cadastrando cliente...");
 
-      UI.toast("Cliente cadastrado!");
+  await API.createCustomer(mapCustomerToApi(customer));
 
-      form.reset();
-      clearAddressFields();
-      setCepHint("Digite o CEP e clique em Buscar. Endereço vem automático 😎", "muted");
+  UI.toast("Cliente cadastrado!");
 
-      await loadClientesFromApi();
-    } catch (err) {
-      UI.toast(err.message || "Erro ao cadastrar cliente.");
-    }
+  form.reset();
+  clearAddressFields();
+  setCepHint("Digite o CEP e clique em Buscar. Endereço vem automático 😎", "muted");
+
+  await loadClientesFromApi();
+} catch (err) {
+  UI.toast(err.message || "Erro ao cadastrar cliente.");
+} finally {
+  UI.hideLoading();
+
+  if (btn) {
+    btn.disabled = false;
+    btn.textContent = btn.dataset.text || "Cadastrar";
+  }
+}
   });
 }
-
   // --- CEP helpers ---
   function onlyDigits(str) {
     return (str || "").replace(/\D/g, "");
@@ -914,44 +947,54 @@ if (!name || !username || !senhaValida) {
   UI.toast("A senha deve atender todos os requisitos.");
   return;
 }
+const btn = form.querySelector("button[type='submit']");
 
+if (btn) {
+  btn.disabled = true;
+  btn.dataset.text = btn.textContent;
+  btn.textContent = "Salvando...";
+}
     try {
-      await API.createUser({
-        name,
-        username,
-        password,
-        role,
-      });
+  UI.showLoading("Cadastrando usuário...");
 
-      UI.toast("Usuário cadastrado!");
+  await API.createUser({
+    name,
+    username,
+    password,
+    role,
+  });
 
-      form.reset();
+  UI.toast("Usuário cadastrado!");
 
-      const strengthBar = document.getElementById("passwordStrengthBar");
-const strengthText = document.getElementById("passwordStrengthText");
+  form.reset();
 
-if (strengthBar) {
-  strengthBar.style.width = "0%";
-  strengthBar.style.background = "#ef4444";
+  const strengthBar = document.getElementById("passwordStrengthBar");
+  const strengthText = document.getElementById("passwordStrengthText");
+
+  if (strengthBar) {
+    strengthBar.style.width = "0%";
+    strengthBar.style.background = "#ef4444";
+  }
+
+  if (strengthText) {
+    strengthText.textContent = "Força da senha: fraca";
+  }
+
+  ["ruleLength", "ruleUpper", "ruleLower", "ruleNumber", "ruleSpecial"].forEach((id) => {
+    document.getElementById(id)?.classList.remove("is-valid");
+  });
+
+  await loadUsuariosFromApi();
+} catch (err) {
+  UI.toast(err.message || "Erro ao cadastrar usuário.");
+} finally {
+  UI.hideLoading();
+
+  if (btn) {
+    btn.disabled = false;
+    btn.textContent = btn.dataset.text || "Usuário";
+  }
 }
-
-if (strengthText) {
-  strengthText.textContent = "Força da senha: fraca";
-}
-[
-  "ruleLength",
-  "ruleUpper",
-  "ruleLower",
-  "ruleNumber",
-  "ruleSpecial",
-].forEach((id) => {
-  document.getElementById(id)?.classList.remove("is-valid");
-});
-
-      await loadUsuariosFromApi();
-    } catch (err) {
-      UI.toast(err.message || "Erro ao cadastrar usuário.");
-    }
   });
 }
 
@@ -1173,30 +1216,47 @@ if (strengthText) {
       UI.toast("Adicione ao menos 1 produto.");
       return;
     }
+    const btn = form.querySelector("button[type='submit']");
 
-    try {
-      await API.createOrder({
-        customerId: clienteId,
-        etaMin,
-        items: pendingItems.map((item) => ({
-          productId: item.produtoId,
-          quantity: item.qtd,
-        })),
-      });
+if (btn) {
+  btn.disabled = true;
+  btn.dataset.text = btn.textContent;
+  btn.textContent = "Criando...";
+}
 
-      UI.toast("Pedido criado!");
+try {
+  UI.showLoading("Criando pedido...");
 
-      pendingItems = [];
-      form.reset();
+  await API.createOrder({
+    customerId: clienteId,
+    etaMin,
+    items: pendingItems.map((item) => ({
+      productId: item.produtoId,
+      quantity: item.qtd,
+    })),
+  });
 
-      const etaField = document.getElementById("oEta");
-      if (etaField) etaField.value = "20";
+  UI.toast("Pedido criado!");
 
-      refreshOrderInputs();
-      await loadOrdersFromApi();
-    } catch (err) {
-      UI.toast(err.message || "Erro ao criar pedido.");
-    }
+  pendingItems = [];
+  form.reset();
+
+  const etaField = document.getElementById("oEta");
+  if (etaField) etaField.value = "20";
+
+  refreshOrderInputs();
+  await loadOrdersFromApi();
+} catch (err) {
+  UI.toast(err.message || "Erro ao criar pedido.");
+} finally {
+  UI.hideLoading();
+  
+
+  if (btn) {
+    btn.disabled = false;
+    btn.textContent = btn.dataset.text || "Criar Pedido";
+  }
+}
   });
 }
   // ---------- SETTINGS ----------

@@ -35,45 +35,57 @@ const Auth = (() => {
   }
 
   document.addEventListener("DOMContentLoaded", () => {
-    const form = document.getElementById("loginForm");
-    if (!form) return;
+  const form = document.getElementById("loginForm");
+  if (!form) return;
 
-    form.addEventListener("submit", async (e) => {
-      e.preventDefault();
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
 
-      const username = document.getElementById("username")?.value.trim();
-      const password = document.getElementById("password")?.value;
+    const username = document.getElementById("username")?.value.trim();
+    const password = document.getElementById("password")?.value;
 
-      if (!username || !password) {
-        UI.toast("Informe usuário e senha.");
-        return;
+    if (!username || !password) {
+      UI.toast("Informe usuário e senha.");
+      return;
+    }
+
+    const btn = form.querySelector("button[type='submit']");
+
+    if (btn) {
+      btn.disabled = true;
+      btn.dataset.text = btn.textContent;
+      btn.textContent = "Entrando...";
+    }
+
+    UI.showLoading("Entrando no sistema...");
+
+    try {
+      await login(username, password);
+
+      UI.toast("Login realizado com sucesso!");
+
+      setTimeout(() => {
+        window.location.replace("admin.html");
+      }, 800);
+    } catch (err) {
+      UI.toast(err.message || "Falha ao realizar login.");
+    } finally {
+      UI.hideLoading();
+
+      if (btn) {
+        btn.disabled = false;
+        btn.textContent = btn.dataset.text || "Entrar";
       }
-
-      const btn = form.querySelector("button[type='submit']");
-      if (btn) btn.disabled = true;
-
-      try {
-        await login(username, password);
-
-        UI.toast("Login realizado com sucesso!");
-
-        setTimeout(() => {
-          window.location.replace("admin.html");
-        }, 800);
-      } catch (err) {
-        UI.toast(err.message || "Falha ao realizar login.");
-      } finally {
-        if (btn) btn.disabled = false;
-      }
+    }
     });
-  });
+});
 
-  return {
-    isLoggedIn,
-    login,
-    logout,
-    requireAuth,
-    redirectIfLoggedIn,
-    getToken
-  };
+return {
+  isLoggedIn,
+  login,
+  logout,
+  requireAuth,
+  redirectIfLoggedIn,
+  getToken
+};
 })();

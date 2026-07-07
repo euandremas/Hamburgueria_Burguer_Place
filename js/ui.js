@@ -91,3 +91,27 @@ document.addEventListener("click", (e) => {
       </svg>
     `;
 });
+function showLoading(message = "Preparando...") {
+  const loading = document.getElementById("globalLoading");
+  const text = document.getElementById("globalLoadingText");
+
+  if (!loading) return;
+
+  if (text) text.textContent = message;
+
+  loading.classList.remove("is-hidden");
+}
+
+function hideLoading() {
+  const loading = document.getElementById("globalLoading");
+
+  if (!loading) return;
+
+  loading.classList.add("is-hidden");
+}
+
+window.UI = {
+  ...window.UI,
+  showLoading,
+  hideLoading,
+};
