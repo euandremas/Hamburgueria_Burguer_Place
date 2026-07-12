@@ -779,3 +779,19 @@ html[data-theme="dark"] .btnGhost:hover{ background: color-mix(in srgb, var(--pa
     min-width: 0;
   }
 }
+.dropzone.is-valid {
+  border: 2px dashed #22c55e !important;
+  background: #ecfdf5 !important;
+  box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.15);
+}
+.dropzone.is-drag {
+  border: 2px dashed #22c55e !important;
+  background: #dcfce7 !important;
+  box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.18);
+  transform: scale(1.01);
+  transition:
+    border-color 0.15s ease,
+    background-color 0.15s ease,
+    box-shadow 0.15s ease,
+    transform 0.15s ease;
+}

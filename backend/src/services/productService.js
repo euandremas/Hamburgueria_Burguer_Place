@@ -90,17 +90,48 @@ async function update(id, data) {
 }
 
 async function remove(id) {
-  const product = await findById(id);
+  const productId = Number(id);
 
-  await prisma.product.delete({ where: { id: Number(id) } });
+  if (!Number.isInteger(productId)) {
+    const error = new Error("ID do produto inválido.");
+    error.statusCode = 400;
+    throw error;
+  }
 
-  await createActivity({
-    type: "new",
-    title: "Produto removido",
-    subtitle: `Produto: ${product.name}`
+  const product = await prisma.product.findUnique({
+    where: { id: productId },
+    include: {
+      items: {
+        select: { id: true },
+        take: 1,
+      },
+    },
   });
 
-  return { message: "Produto removido com sucesso." };
-}
+  if (!product) {
+    const error = new Error("Produto não encontrado.");
+    error.statusCode = 404;
+    throw error;
+  }
 
-module.exports = { list, findById, create, update, remove };
+  if (product.items.length > 0) {
+    const error = new Error("Este produto está vinculado a pedidos e não pode ser excluído.");
+    error.statusCode = 409;
+    throw error;
+  }
+
+  await prisma.product.delete({
+    where: { id: productId },
+  });
+
+  return {
+    message: "Produto removido com sucesso.",
+  };
+}
+module.exports = {
+  list,
+  findById,
+  create,
+  update,
+  remove,
+};

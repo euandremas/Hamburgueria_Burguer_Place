@@ -325,36 +325,57 @@ async function loadOrdersFromApi() {
     });
 
     input.addEventListener("change", async () => {
-      const file = input.files?.[0];
-      if (!file) return;
-      await handleProductFile(file);
-    });
+  dz.classList.remove("is-drag");
 
-    dz.addEventListener("dragover", (e) => {
-      e.preventDefault();
-      dz.classList.add("is-drag");
-    });
+  const file = input.files?.[0];
+  if (!file) return;
 
-    dz.addEventListener("dragleave", () => dz.classList.remove("is-drag"));
+  await handleProductFile(file);
+});
 
-    dz.addEventListener("drop", async (e) => {
-      e.preventDefault();
-      dz.classList.remove("is-drag");
-      const file = e.dataTransfer?.files?.[0];
-      if (!file) return;
-      await handleProductFile(file);
-    });
+dz.addEventListener("dragenter", (e) => {
+  e.preventDefault();
+  dz.classList.add("is-drag");
+});
 
-    async function handleProductFile(file) {
-      if (!file.type.startsWith("image/")) {
-        UI.toast("Envie um arquivo de imagem.");
-        return;
-      }
-      currentProductImgDataUrl = await UI.readFileAsDataURL(file);
-      preview.innerHTML = `<img src="${currentProductImgDataUrl}" alt="Preview" />`;
-      UI.toast("Imagem carregada!");
-    }
+dz.addEventListener("dragover", (e) => {
+  e.preventDefault();
+  dz.classList.add("is-drag");
+});
+
+dz.addEventListener("dragleave", () => {
+  dz.classList.remove("is-drag");
+});
+
+dz.addEventListener("drop", async (e) => {
+  e.preventDefault();
+  dz.classList.remove("is-drag");
+
+  const file = e.dataTransfer.files?.[0];
+  if (!file) return;
+
+  await handleProductFile(file);
+});
+
+  async function handleProductFile(file) {
+  if (!file) return;
+
+  if (!file.type.startsWith("image/")) {
+    UI.toast("Envie um arquivo de imagem.");
+    return;
   }
+
+  currentProductImgDataUrl = await UI.readFileAsDataURL(file);
+  preview.innerHTML = `<img src="${currentProductImgDataUrl}" alt="Preview" />`;
+
+  const dropzone = document.getElementById("dropzone");
+
+  UI.clearHighlight(dz);
+  dz.classList.add("is-valid");
+
+  UI.toast("Imagem carregada com sucesso!");
+  }
+ }
 
   function setupProdutoForm() {
   const form = document.getElementById("formProduto");
@@ -368,11 +389,43 @@ async function loadOrdersFromApi() {
     const preco = Number(document.getElementById("pPreco").value);
     const desc = document.getElementById("pDesc").value.trim();
 
-    if (!tipo || !nome || !desc || !Number.isFinite(preco) || preco <= 0) {
-      UI.toast("Preencha os campos corretamente.");
-      return;
-    }
+   if (!tipo) {
+  UI.highlightField(document.getElementById("pTipo"));
+  UI.toast("Informe o tipo do produto.");
+  return;
+}
 
+const nomeValido = nome.replace(/[^a-zA-ZÀ-ÿ]/g, "").length >= 3;
+
+if (!nomeValido) {
+  UI.highlightField(document.getElementById("pNome"));
+  UI.toast("Informe um nome com pelo menos 3 letras ou números.");
+  return;
+}
+
+if (!Number.isFinite(preco) || preco <= 0) {
+  UI.highlightField(document.getElementById("pPreco"));
+  UI.toast("Informe um preço válido maior que zero.");
+  return;
+}
+
+if (preco > 999.99) {
+  UI.highlightField(document.getElementById("pPreco"));
+  UI.toast("O preço informado está muito alto. Verifique o valor.");
+  return;
+}
+
+if (!desc || desc.length < 10) {
+  UI.highlightField(document.getElementById("pDesc"));
+  UI.toast("Informe uma descrição com pelo menos 10 caracteres.");
+  return;
+}
+
+if (!currentProductImgDataUrl) {
+  UI.highlightField(document.getElementById("dropzone"));
+  UI.toast("Selecione uma imagem para o produto.");
+  return;
+}
     const btn = form.querySelector("button[type='submit']");
 
 if (btn) {
@@ -394,10 +447,14 @@ try {
     })
   );
 
-  UI.toast("Produto cadastrado!");
+  UI.toast("Produto cadastrado com sucesso!");
 
   form.reset();
   currentProductImgDataUrl = "";
+
+const dropzone = document.getElementById("dropzone");
+dropzone?.classList.remove("is-valid");
+UI.clearHighlight(dropzone);
 
   const pv = document.getElementById("dropPreview");
   if (pv) pv.innerHTML = "";

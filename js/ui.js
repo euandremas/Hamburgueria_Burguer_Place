@@ -35,20 +35,29 @@ const UI = (() => {
     const text = document.getElementById("globalLoadingText");
 
     if (!loading) return;
-
-    if (text) {
-      text.textContent = message;
-    }
+    if (text) text.textContent = message;
 
     loading.classList.remove("is-hidden");
   }
 
   function hideLoading() {
     const loading = document.getElementById("globalLoading");
-
     if (!loading) return;
 
     loading.classList.add("is-hidden");
+  }
+
+  function highlightField(element) {
+    if (!element) return;
+
+    element.classList.add("is-invalid");
+    element.focus();
+  }
+
+  function clearHighlight(element) {
+    if (!element) return;
+
+    element.classList.remove("is-invalid");
   }
 
   return {
@@ -57,8 +66,22 @@ const UI = (() => {
     readFileAsDataURL,
     showLoading,
     hideLoading,
+    highlightField,
+    clearHighlight,
   };
 })();
+
+document.addEventListener("input", (e) => {
+  if (e.target.classList.contains("is-invalid")) {
+    UI.clearHighlight(e.target);
+  }
+});
+
+document.addEventListener("change", (e) => {
+  if (e.target.classList.contains("is-invalid")) {
+    UI.clearHighlight(e.target);
+  }
+});
 
 document.addEventListener("click", (e) => {
   const btn = e.target.closest(".togglePassword");
