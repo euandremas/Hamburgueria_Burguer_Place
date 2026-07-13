@@ -795,3 +795,13 @@ html[data-theme="dark"] .btnGhost:hover{ background: color-mix(in srgb, var(--pa
     box-shadow 0.15s ease,
     transform 0.15s ease;
 }
+.formActions {
+  display: flex;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.formActions .btnPrimary,
+.formActions .btnGhost {
+  flex: 1;
+}

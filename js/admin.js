@@ -12,11 +12,14 @@ const Admin = (() => {
     config: "view-config",
   };
 
-  // produtos temp img
-  let currentProductImgDataUrl = "";
+  // produtos: imagem
+let currentProductImgDataUrl = "";
 
-  // pedidos: itens temporários do form
-  let pendingItems = [];
+// produtos: edição
+let editingProductId = null;
+
+// pedidos: itens temporários do form
+let pendingItems = [];
 
   function mapProductFromApi(product) {
   return {
@@ -276,7 +279,8 @@ async function loadOrdersFromApi() {
         <td class="trunc" title="${UI.escapeHtml(p.desc)}">${UI.escapeHtml(p.desc)}</td>
         <td class="right"><strong style="color: var(--green)">${Store.moneyBR(p.preco)}</strong></td>
         <td class="right">
-          <button class="iconBtn" data-del-prod="${p.id}" title="Excluir">🗑</button>
+         <button class="iconBtn" data-edit-product="${p.id}" title="Editar">✏️</button>
+         <button class="iconBtn" data-del-product="${p.id}" title="Excluir">🗑</button>  
         </td>
       </tr>
     `
@@ -284,24 +288,74 @@ async function loadOrdersFromApi() {
       .join("");
 
     tbody.querySelectorAll("[data-del-prod]").forEach((btn) => {
-      btn.addEventListener("click", async () => {
-      const id = Number(btn.getAttribute("data-del-prod"));
-      const prod = s.produtos.find((x) => x.id === id);
-      if (!prod) return;
+  btn.addEventListener("click", async () => {
+    const id = Number(btn.getAttribute("data-del-prod"));
+    const prod = s.produtos.find((x) => x.id === id);
 
-      const confirmed = confirm(`Deseja excluir o produto "${prod.nome}"?`);
-      if (!confirmed) return;
+    if (!prod) return;
 
-      try {
+    const confirmed = confirm(`Deseja excluir o produto "${prod.nome}"?`);
+    if (!confirmed) return;
+
+    try {
       await API.deleteProduct(id);
       UI.toast("Produto removido.");
       await loadProdutosFromApi();
-      } catch (err) {
+    } catch (err) {
       UI.toast(err.message || "Erro ao remover produto.");
-      }
-      });
+    }
+  });
+});
+
+tbody.querySelectorAll("[data-edit-product]").forEach((btn) => {
+  btn.addEventListener("click", () => {
+    const id = Number(btn.dataset.editProduct);
+    const product = s.produtos.find((item) => item.id === id);
+
+    if (!product) {
+      UI.toast("Produto não encontrado.");
+      return;
+    }
+
+    editingProductId = product.id;
+
+    document.getElementById("pTipo").value = product.tipo;
+    document.getElementById("pNome").value = product.nome;
+    document.getElementById("pPreco").value = product.preco;
+    document.getElementById("pDesc").value = product.desc;
+
+    currentProductImgDataUrl = product.imgDataUrl || "";
+
+    const preview = document.getElementById("dropPreview");
+    const dropzone = document.getElementById("dropzone");
+
+    if (preview) {
+      preview.innerHTML = currentProductImgDataUrl
+        ? `<img src="${currentProductImgDataUrl}" alt="Preview do produto" />`
+        : "";
+    }
+
+    dropzone?.classList.toggle("is-valid", Boolean(currentProductImgDataUrl));
+
+    const submitBtn = document.querySelector("#formProduto button[type='submit']");
+
+    if (submitBtn) {
+      submitBtn.dataset.createText ||= submitBtn.textContent;
+      submitBtn.textContent = "Salvar alterações";
+    }
+
+    const cancelEditBtn = document.getElementById("btnCancelProductEdit");
+    cancelEditBtn?.classList.remove("is-hidden");
+
+    document.getElementById("view-produtos")?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
     });
-  }
+
+    UI.toast("Produto carregado para edição.");
+  });
+});
+}
 
   function setupDropzone() {
     const dz = document.getElementById("dropzone");
@@ -379,7 +433,32 @@ dz.addEventListener("drop", async (e) => {
 
   function setupProdutoForm() {
   const form = document.getElementById("formProduto");
+  const cancelEditBtn = document.getElementById("btnCancelProductEdit");
+
   if (!form) return;
+
+  cancelEditBtn?.addEventListener("click", () => {
+    editingProductId = null;
+    currentProductImgDataUrl = "";
+
+    form.reset();
+
+    const preview = document.getElementById("dropPreview");
+    const dropzone = document.getElementById("dropzone");
+    const submitBtn = form.querySelector("button[type='submit']");
+
+    if (preview) preview.innerHTML = "";
+
+    dropzone?.classList.remove("is-valid", "is-invalid", "is-drag");
+
+    if (submitBtn) {
+      submitBtn.textContent = submitBtn.dataset.createText || "+ Produto";
+    }
+
+    cancelEditBtn.classList.add("is-hidden");
+
+    UI.toast("Edição cancelada.");
+  });
 
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -389,11 +468,11 @@ dz.addEventListener("drop", async (e) => {
     const preco = Number(document.getElementById("pPreco").value);
     const desc = document.getElementById("pDesc").value.trim();
 
-   if (!tipo) {
-  UI.highlightField(document.getElementById("pTipo"));
-  UI.toast("Informe o tipo do produto.");
-  return;
-}
+    if (!tipo) {
+      UI.highlightField(document.getElementById("pTipo"));
+      UI.toast("Informe o tipo do produto.");
+      return;
+    }
 
 const nomeValido = nome.replace(/[^a-zA-ZÀ-ÿ]/g, "").length >= 3;
 
@@ -437,27 +516,34 @@ if (btn) {
 try {
   UI.showLoading("Cadastrando produto...");
 
-  await API.createProduct(
-    mapProductToApi({
-      tipo,
-      nome,
-      preco,
-      desc,
-      imgDataUrl: currentProductImgDataUrl,
-    })
-  );
+  const productData = mapProductToApi({
+  tipo,
+  nome,
+  preco,
+  desc,
+  imgDataUrl: currentProductImgDataUrl,
+});
 
+if (editingProductId) {
+  await API.updateProduct(editingProductId, productData);
+  UI.toast("Produto atualizado com sucesso!");
+} else {
+  await API.createProduct(productData);
   UI.toast("Produto cadastrado com sucesso!");
+}
 
   form.reset();
-  currentProductImgDataUrl = "";
+currentProductImgDataUrl = "";
+editingProductId = null;
 
 const dropzone = document.getElementById("dropzone");
 dropzone?.classList.remove("is-valid");
 UI.clearHighlight(dropzone);
 
-  const pv = document.getElementById("dropPreview");
-  if (pv) pv.innerHTML = "";
+const preview = document.getElementById("dropPreview");
+if (preview) preview.innerHTML = "";
+
+await loadProdutosFromApi();
 
   await loadProdutosFromApi();
 } catch (err) {
@@ -465,9 +551,9 @@ UI.clearHighlight(dropzone);
 } finally {
   UI.hideLoading();
 
-  if (btn) {
-    btn.disabled = false;
-    btn.textContent = btn.dataset.text || "Cadastrar";
+ if (btn) {
+  btn.disabled = false;
+  btn.textContent = btn.dataset.createText || "Cadastrar";
   }
 }
 
