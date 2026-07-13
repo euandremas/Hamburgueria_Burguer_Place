@@ -287,14 +287,24 @@ async function loadOrdersFromApi() {
       )
       .join("");
 
-    tbody.querySelectorAll("[data-del-prod]").forEach((btn) => {
+    tbody.querySelectorAll("[data-del-product]").forEach((btn) => {
   btn.addEventListener("click", async () => {
-    const id = Number(btn.getAttribute("data-del-prod"));
-    const prod = s.produtos.find((x) => x.id === id);
+    const id = Number(btn.dataset.delProduct);
+    const prod = s.produtos.find((item) => item.id === id);
 
-    if (!prod) return;
+    if (!prod) {
+      UI.toast("Produto não encontrado.");
+      return;
+    }
 
-    const confirmed = confirm(`Deseja excluir o produto "${prod.nome}"?`);
+    const confirmed = await UI.confirm({
+      title: "Excluir produto",
+      message: `Deseja realmente excluir o produto "${prod.nome}"?`,
+      confirmText: "Excluir",
+      cancelText: "Cancelar",
+      danger: true,
+    });
+
     if (!confirmed) return;
 
     try {

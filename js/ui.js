@@ -60,6 +60,76 @@ const UI = (() => {
     element.classList.remove("is-invalid");
   }
 
+  function confirm({
+    title = "Confirmação",
+    message = "Deseja continuar?",
+    confirmText = "Confirmar",
+    cancelText = "Cancelar",
+    danger = true,
+  } = {}) {
+    const modal = document.getElementById("confirmModal");
+    const titleElement = document.getElementById("confirmTitle");
+    const messageElement = document.getElementById("confirmMessage");
+    const confirmButton = document.getElementById("confirmOk");
+    const cancelButton = document.getElementById("confirmCancel");
+
+    if (!modal || !titleElement || !messageElement || !confirmButton || !cancelButton) {
+      return Promise.resolve(window.confirm(message));
+    }
+
+    titleElement.textContent = title;
+    messageElement.textContent = message;
+    confirmButton.textContent = confirmText;
+    cancelButton.textContent = cancelText;
+
+    confirmButton.classList.toggle("btnDanger", danger);
+    modal.classList.remove("is-hidden");
+
+    return new Promise((resolve) => {
+      function closeModal(result) {
+        modal.classList.add("is-hidden");
+
+        confirmButton.removeEventListener("click", handleConfirm);
+        cancelButton.removeEventListener("click", handleCancel);
+        modal.removeEventListener("click", handleOverlayClick);
+        document.removeEventListener("keydown", handleKeydown);
+
+        resolve(result);
+      }
+
+      function handleConfirm() {
+        closeModal(true);
+      }
+
+      function handleCancel() {
+        closeModal(false);
+      }
+
+      function handleOverlayClick(e) {
+        if (e.target === modal) {
+          closeModal(false);
+        }
+      }
+
+      function handleKeydown(e) {
+        if (e.key === "Escape") {
+          closeModal(false);
+        }
+
+        if (e.key === "Enter") {
+          closeModal(true);
+        }
+      }
+
+      confirmButton.addEventListener("click", handleConfirm);
+      cancelButton.addEventListener("click", handleCancel);
+      modal.addEventListener("click", handleOverlayClick);
+      document.addEventListener("keydown", handleKeydown);
+
+      confirmButton.focus();
+    });
+  }
+
   return {
     toast,
     escapeHtml,
@@ -68,6 +138,7 @@ const UI = (() => {
     hideLoading,
     highlightField,
     clearHighlight,
+    confirm,
   };
 })();
 
@@ -93,6 +164,8 @@ document.addEventListener("click", (e) => {
   const isHidden = input.type === "password";
 
   input.type = isHidden ? "text" : "password";
+  btn.title = isHidden ? "Ocultar senha" : "Mostrar senha";
+  btn.setAttribute("aria-label", btn.title);
 
   btn.innerHTML = isHidden
     ? `

@@ -805,3 +805,75 @@ html[data-theme="dark"] .btnGhost:hover{ background: color-mix(in srgb, var(--pa
 .formActions .btnGhost {
   flex: 1;
 }
+/* ===== Modal de confirmação ===== */
+
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background: rgba(15, 23, 42, 0.58);
+  backdrop-filter: blur(4px);
+}
+
+.modalOverlay.is-hidden {
+  display: none;
+}
+
+.confirmModal {
+  width: min(420px, 100%);
+  padding: 24px;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  background: var(--card);
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.28);
+  animation: confirmModalOpen 0.18s ease;
+}
+
+.confirmModal h3 {
+  margin: 0 0 12px;
+  color: var(--fg);
+  font-size: 22px;
+}
+
+.confirmModal p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.confirmActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.confirmActions .btnGhost,
+.confirmActions .btnPrimary {
+  min-width: 110px;
+}
+
+.btnDanger {
+  background: #ef4444 !important;
+  color: #fff;
+}
+
+.btnDanger:hover {
+  background: #dc2626 !important;
+}
+
+@keyframes confirmModalOpen {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.96);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
