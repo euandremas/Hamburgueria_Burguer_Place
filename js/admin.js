@@ -20,6 +20,9 @@ let editingProductId = null;
 
 // pedidos: itens temporários do form
 let pendingItems = [];
+let orderSearchTerm = "";
+let orderSortMode = "newest";
+let orderStatusFilter = "all";
 
   function mapProductFromApi(product) {
   return {
@@ -1239,116 +1242,372 @@ if (btn) {
   }
 
   function renderOrders() {
-    document.getElementById("orderCount").textContent = String(s.pedidos.length);
+  const list = document.getElementById("ordersList");
+  if (!list) return;
 
-    const list = document.getElementById("ordersList");
-    if (!list) return;
+  const normalizedSearch = orderSearchTerm.trim().toLowerCase();
 
-    list.innerHTML = s.pedidos
-      .slice()
-      .sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt))
-      .map((o) => {
-        const key = statusKey(o.status);
-        const cls =
-          key === "done" ? "orderCard--done" : key === "way" ? "orderCard--way" : "orderCard--prep";
-        const badgeCls =
-          key === "done" ? "badge--done" : key === "way" ? "badge--way" : "badge--prep";
+ const filteredOrders = s.pedidos.filter((order) => {
+  const matchesStatus =
+    orderStatusFilter === "all" || order.status === orderStatusFilter;
 
-        const cliente = (s.clientes || []).find((c) => c.id === o.clienteId)?.nome || "—";
-        const total = Store.moneyBR(orderTotal(o));
-        const itens = o.itens.map((i) => `${i.qtd} x ${UI.escapeHtml(i.nome)}`).join("<br/>");
+  if (!matchesStatus) return false;
+  if (!normalizedSearch) return true;
 
-        const showEta = o.status !== "Entregue";
-        const etaLine = showEta
-          ? `<div class="orderMeta"><strong>ETA:</strong> <input class="etaInput" data-eta="${o.id}" type="number" min="1" value="${o.etaMin}" /> min</div>`
-          : `<div class="orderMeta"><strong>ETA:</strong> entregue</div>`;
+  const customerName =
+    (s.clientes || []).find((customer) => customer.id === order.clienteId)?.nome || "";
 
-        const nextButtons =
-          o.status === "Em preparação"
-            ? `<button class="btnStatus btnStatus--way" data-status="${o.id}" data-to="A caminho">Marcar como A caminho</button>`
-            : o.status === "A caminho"
-              ? `<button class="btnStatus btnStatus--done" data-status="${o.id}" data-to="Entregue">Marcar como Entregue</button>`
-              : `<button class="btnStatus btnStatus--prep" data-status="${o.id}" data-to="Em preparação">Voltar para Em preparação</button>`;
+  const orderNumber = String(order.id).padStart(3, "0");
+  const productNames = order.itens.map((item) => item.nome).join(" ");
 
-        return `
-          <article class="orderCard ${cls}">
-            <div class="orderTop">
-              <div>
-                <div class="orderTitle">
-                  Pedido nº ${String(o.id).padStart(3,"0")}
-                  <span class="badge ${badgeCls}">${o.status}</span>
-                </div>
-                <div class="orderMeta">Cliente: ${UI.escapeHtml(cliente)}</div>
-              </div>
+  return [orderNumber, customerName, productNames, order.status]
+    .join(" ")
+    .toLowerCase()
+    .includes(normalizedSearch);
+});
 
-              <div style="text-align:right">
-                <div style="font-weight:900;color:var(--green)">${total}</div>
-                <div class="orderMeta">${UI.escapeHtml(o.timeLabel || Store.nowTime())}</div>
-              </div>
-            </div>
+  const sortedOrders = filteredOrders.slice().sort((a, b) => {
+    if (orderSortMode === "oldest") {
+      return new Date(a.createdAt) - new Date(b.createdAt);
+    }
 
-            <div class="orderBody">
-              <div class="orderMeta"><strong>Produtos:</strong></div>
-              <div style="margin-top:8px; color: var(--muted)">${itens || "—"}</div>
-              ${etaLine}
-            </div>
+    if (orderSortMode === "highest") {
+      return orderTotal(b) - orderTotal(a);
+    }
 
-            <div class="orderActions">
-              ${nextButtons}
-            </div>
-          </article>
-        `;
-      })
-      .join("");
+    if (orderSortMode === "lowest") {
+      return orderTotal(a) - orderTotal(b);
+    }
 
-    // status buttons
-    list.querySelectorAll("[data-status]").forEach((btn) => {
-      btn.addEventListener("click", async () => {
-        const id = Number(btn.getAttribute("data-status"));
-        const to = btn.getAttribute("data-to");
-        const o = s.pedidos.find((x) => x.id === id);
-        if (!o) return;
+    if (orderSortMode === "status") {
+      return a.status.localeCompare(b.status, "pt-BR");
+    }
 
-        try {
-  await API.updateOrderStatus(id, to);
+    return new Date(b.createdAt) - new Date(a.createdAt);
+  });
 
-  UI.toast("Status atualizado!");
+  document.getElementById("orderCount").textContent = String(filteredOrders.length);
 
-  await loadOrdersFromApi();
-} catch (err) {
-  UI.toast(err.message || "Erro ao atualizar status.");
+  if (!sortedOrders.length) {
+  list.innerHTML = `
+    <div class="emptyState">
+      <strong>Nenhum pedido encontrado.</strong>
+      <span>Tente ajustar a busca ou os filtros.</span>
+    </div>
+  `;
+  return;
 }
-      });
-    });
 
-    // ETA input
-    list.querySelectorAll(".etaInput").forEach((inp) => {
-      inp.addEventListener("change", async () => {
-        const id = Number(inp.getAttribute("data-eta"));
-        const o = s.pedidos.find((x) => x.id === id);
-        if (!o) return;
+  list.innerHTML = sortedOrders
+    .map((o) => {
+      
+    const key = statusKey(o.status);
 
-        const newEta = Math.max(1, Number(inp.value || 1));
-        try {
-        await API.updateOrderEta(id, newEta);
+      const cls =
+        key === "done"
+          ? "orderCard--done"
+          : key === "way"
+            ? "orderCard--way"
+            : "orderCard--prep";
 
-        UI.toast("ETA atualizado!");
+      const badgeCls =
+        key === "done"
+          ? "badge--done"
+          : key === "way"
+            ? "badge--way"
+            : "badge--prep";
 
+      const cliente = (s.clientes || []).find((c) => c.id === o.clienteId)?.nome || "—";
+      const total = Store.moneyBR(orderTotal(o));
+     const itens = o.itens
+  .map((item) => `${item.qtd} x ${highlightSearchText(item.nome, orderSearchTerm)}`)
+  .join("<br/>");
+
+      const showEta = o.status !== "Entregue";
+
+      const etaLine = showEta
+        ? `
+          <div class="orderMeta">
+            <strong>ETA:</strong>
+            <input
+              class="etaInput"
+              data-eta="${o.id}"
+              type="number"
+              min="1"
+              max="240"
+              value="${o.etaMin}"
+            />
+            min
+          </div>
+        `
+        : `<div class="orderMeta"><strong>ETA:</strong> entregue</div>`;
+
+      // Será ativado quando o controle de perfis estiver implementado.
+      const canReopenOrder = false;
+
+      const nextButtons =
+        o.status === "Em preparação"
+          ? `
+            <button
+              class="btnStatus btnStatus--way"
+              data-status="${o.id}"
+              data-to="A caminho"
+              type="button"
+            >
+              Marcar como A caminho
+            </button>
+          `
+          : o.status === "A caminho"
+            ? `
+              <button
+                class="btnStatus btnStatus--done"
+                data-status="${o.id}"
+                data-to="Entregue"
+                type="button"
+              >
+                Marcar como Entregue
+              </button>
+            `
+            : canReopenOrder
+              ? `
+                <span class="orderFinished">Pedido finalizado</span>
+
+                <button
+                  class="btnStatus btnStatus--reopen"
+                  data-reopen-order="${o.id}"
+                  type="button"
+                >
+                  Reabrir pedido
+                </button>
+              `
+              : `<span class="orderFinished">Pedido finalizado</span>`;
+
+      return `
+        <article class="orderCard ${cls}">
+          <div class="orderTop">
+            <div>
+              <div class="orderTitle">
+                Pedido nº ${highlightSearchText(String(o.id).padStart(3, "0"), orderSearchTerm)}
+                <span class="badge ${badgeCls}">${UI.escapeHtml(o.status)}</span>
+              </div>
+
+              <div class="orderMeta">
+                Cliente: ${highlightSearchText(cliente, orderSearchTerm)}
+              </div>
+            </div>
+
+            <div style="text-align: right">
+              <div style="font-weight: 900; color: var(--green)">
+                ${total}
+              </div>
+
+              <div class="orderMeta">
+                ${UI.escapeHtml(o.timeLabel || Store.nowTime())}
+              </div>
+            </div>
+          </div>
+
+          <div class="orderBody">
+            <div class="orderMeta">
+              <strong>Produtos:</strong>
+            </div>
+
+            <div style="margin-top: 8px; color: var(--muted)">
+              ${itens || "—"}
+            </div>
+
+            ${etaLine}
+          </div>
+
+          <div class="orderActions">
+            ${nextButtons}
+          </div>
+        </article>
+      `;
+    })
+    .join("");
+
+  // Atualização de status
+  list.querySelectorAll("[data-status]").forEach((btn) => {
+    btn.addEventListener("click", async () => {
+      const id = Number(btn.dataset.status);
+      const to = btn.dataset.to;
+      const order = s.pedidos.find((item) => item.id === id);
+
+      if (!order) {
+        UI.toast("Pedido não encontrado.");
+        return;
+      }
+
+      const validTransitions = {
+        "Em preparação": "A caminho",
+        "A caminho": "Entregue",
+      };
+
+      if (validTransitions[order.status] !== to) {
+        UI.toast("Transição de status inválida.");
+        return;
+      }
+
+      if (to === "Entregue") {
+  const confirmed = await UI.confirm({
+    title: "Finalizar pedido",
+    message: `Confirma a entrega do pedido nº ${String(order.id).padStart(3, "0")}? Após finalizar, o pedido não poderá ser alterado pelo operador.`,
+    confirmText: "Finalizar",
+    cancelText: "Cancelar",
+    danger: false,
+  });
+
+  if (!confirmed) return;
+}
+
+      const originalText = btn.textContent;
+
+      btn.disabled = true;
+      btn.textContent = "Atualizando...";
+
+      try {
+        await API.updateOrderStatus(id, to);
+
+        UI.toast(`Pedido marcado como "${to}".`);
         await loadOrdersFromApi();
-}       catch (err) {
-        UI.toast(err.message || "Erro ao atualizar ETA.");
-}
-      });
+      } catch (err) {
+        UI.toast(err.message || "Erro ao atualizar status.");
+
+        btn.disabled = false;
+        btn.textContent = originalText;
+      }
     });
-  }
+  });
+
+    // Atualização do ETA
+  list.querySelectorAll("[data-eta]").forEach((input) => {
+    input.addEventListener("change", async () => {
+      const id = Number(input.dataset.eta);
+      const etaMin = Number(input.value);
+      const order = s.pedidos.find((item) => item.id === id);
+
+      if (!order) {
+        UI.toast("Pedido não encontrado.");
+        return;
+      }
+
+      if (!Number.isInteger(etaMin) || etaMin < 1 || etaMin > 240) {
+        UI.highlightField(input);
+        UI.toast("Informe um ETA entre 1 e 240 minutos.");
+        input.value = order.etaMin;
+        return;
+      }
+
+      const originalValue = order.etaMin;
+      input.disabled = true;
+
+      try {
+        await API.updateOrderEta(id, etaMin);
+        UI.toast("Tempo estimado atualizado.");
+        await loadOrdersFromApi();
+      } catch (err) {
+        input.value = originalValue;
+        UI.toast(err.message || "Erro ao atualizar o tempo estimado.");
+      } finally {
+        input.disabled = false;
+      }
+    });
+  });
+
+  // Reabertura administrativa futura
+  list.querySelectorAll("[data-reopen-order]").forEach((btn) => {
+    btn.addEventListener("click", async () => {
+      const id = Number(btn.dataset.reopenOrder);
+      const order = s.pedidos.find((item) => item.id === id);
+
+      if (!order) {
+        UI.toast("Pedido não encontrado.");
+        return;
+      }
+
+      const confirmed = await UI.confirm({
+        title: "Reabrir pedido",
+        message: `Deseja reabrir o pedido nº ${String(order.id).padStart(3, "0")} e voltar para "A caminho"?`,
+        confirmText: "Reabrir",
+        cancelText: "Cancelar",
+        danger: false,
+      });
+
+      if (!confirmed) return;
+
+      try {
+        btn.disabled = true;
+        btn.textContent = "Reabrindo...";
+
+        await API.updateOrderStatus(id, "A caminho");
+
+        UI.toast("Pedido reaberto com sucesso.");
+        await loadOrdersFromApi();
+      } catch (err) {
+        UI.toast(err.message || "Erro ao reabrir pedido.");
+
+        btn.disabled = false;
+        btn.textContent = "Reabrir pedido";
+      }
+    });
+  });
+}
+
+function setupOrderFilters() {
+  const searchInput = document.getElementById("orderSearch");
+  const sortSelect = document.getElementById("orderSort");
+  const statusButtons = document.querySelectorAll("[data-order-filter]");
+
+  if (sortSelect) sortSelect.value = orderSortMode;
+
+  searchInput?.addEventListener("input", () => {
+    orderSearchTerm = searchInput.value;
+    renderOrders();
+  });
+
+  sortSelect?.addEventListener("change", () => {
+    orderSortMode = sortSelect.value;
+    renderOrders();
+  });
+
+  statusButtons.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      orderStatusFilter = btn.dataset.orderFilter;
+
+      statusButtons.forEach((item) => {
+        item.classList.toggle("is-active", item === btn);
+      });
+
+      renderOrders();
+    });
+  });
+}
+
+function highlightSearchText(text, searchTerm) {
+  const safeText = UI.escapeHtml(text);
+  const term = String(searchTerm || "").trim();
+
+  if (!term) return safeText;
+
+  const escapedTerm = term.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const regex = new RegExp(`(${escapedTerm})`, "gi");
+
+  return safeText.replace(regex, "<mark>$1</mark>");
+}
 
   function setupOrderForm() {
   document.getElementById("btnAddItem")?.addEventListener("click", () => {
-    const sel = document.getElementById("oProduto");
-    const val = sel?.value;
-    if (!val) return;
+    const select = document.getElementById("oProduto");
+    const productId = select?.value;
 
-    addItemToPending(val);
+    if (!productId) {
+      UI.highlightField(select);
+      UI.toast("Selecione um produto.");
+      return;
+    }
+
+    addItemToPending(productId);
   });
 
   const form = document.getElementById("formPedido");
@@ -1358,58 +1617,65 @@ if (btn) {
     e.preventDefault();
 
     const clienteId = Number(document.getElementById("oCliente").value);
-    const etaMin = Math.max(1, Number(document.getElementById("oEta").value || 20));
+    const etaMin = Number(document.getElementById("oEta").value);
+    const btn = form.querySelector("button[type='submit']");
 
     if (!clienteId) {
+      UI.highlightField(document.getElementById("oCliente"));
       UI.toast("Selecione um cliente.");
       return;
     }
 
     if (!pendingItems.length) {
+      UI.highlightField(document.getElementById("oProduto"));
       UI.toast("Adicione ao menos 1 produto.");
       return;
     }
-    const btn = form.querySelector("button[type='submit']");
 
-if (btn) {
-  btn.disabled = true;
-  btn.dataset.text = btn.textContent;
-  btn.textContent = "Criando...";
-}
+    if (!Number.isInteger(etaMin) || etaMin < 1 || etaMin > 240) {
+      UI.highlightField(document.getElementById("oEta"));
+      UI.toast("Informe um ETA entre 1 e 240 minutos.");
+      return;
+    }
 
-try {
-  UI.showLoading("Criando pedido...");
+    if (btn) {
+      btn.disabled = true;
+      btn.dataset.text ||= btn.textContent;
+      btn.textContent = "Criando...";
+    }
 
-  await API.createOrder({
-    customerId: clienteId,
-    etaMin,
-    items: pendingItems.map((item) => ({
-      productId: item.produtoId,
-      quantity: item.qtd,
-    })),
-  });
+    try {
+      UI.showLoading("Criando pedido...");
 
-  UI.toast("Pedido criado!");
+      await API.createOrder({
+        customerId: clienteId,
+        etaMin,
+        items: pendingItems.map((item) => ({
+          productId: item.produtoId,
+          quantity: item.qtd,
+        })),
+      });
 
-  pendingItems = [];
-  form.reset();
+      UI.toast("Pedido criado com sucesso.");
 
-  const etaField = document.getElementById("oEta");
-  if (etaField) etaField.value = "20";
+      pendingItems = [];
+      form.reset();
 
-  refreshOrderInputs();
-  await loadOrdersFromApi();
-} catch (err) {
-  UI.toast(err.message || "Erro ao criar pedido.");
-} finally {
-  UI.hideLoading();
-  
+      const etaField = document.getElementById("oEta");
+      if (etaField) etaField.value = "20";
 
-  if (btn) {
-    btn.disabled = false;
-    btn.textContent = btn.dataset.text || "Criar Pedido";
-  }
-}
+      refreshOrderInputs();
+      await loadOrdersFromApi();
+    } catch (err) {
+      UI.toast(err.message || "Erro ao criar pedido.");
+    } finally {
+      UI.hideLoading();
+
+      if (btn) {
+        btn.disabled = false;
+        btn.textContent = btn.dataset.text || "Criar Pedido";
+      }
+    }
   });
 }
   // ---------- SETTINGS ----------
@@ -1444,8 +1710,9 @@ try {
 
     setupUserSuggest();
     setupUsuarioForm();
-
+       
     setupOrderForm();
+    setupOrderFilters()
     setupDarkMode();
 
    loadProdutosFromApi();

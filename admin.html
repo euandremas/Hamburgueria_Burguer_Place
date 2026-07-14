@@ -476,52 +476,86 @@
 </section>
 
       <!-- PEDIDOS -->
-      <section class="view" id="view-pedidos">
-        <header class="pageHead">
-          <h1>Pedidos</h1>
-          <p>Gerenciar os pedidos da hamburgueria</p>
-        </header>
+<section class="view" id="view-pedidos">
+  <header class="pageHead">
+    <h1>Pedidos</h1>
+    <p>Gerenciar os pedidos da hamburgueria</p>
+  </header>
 
-        <div class="grid2">
-          <section class="panel">
-            <h2><span class="plus">+</span> Novo Pedido</h2>
+  <div class="grid2">
+    <section class="panel">
+      <h2><span class="plus">+</span> Novo Pedido</h2>
 
-            <form id="formPedido" class="form">
-              <label class="field">
-                <span>Cliente</span>
-                <select id="oCliente" required></select>
-              </label>
+      <form id="formPedido" class="form">
+        <label class="field">
+          <span>Cliente</span>
+          <select id="oCliente" required></select>
+        </label>
 
-              <label class="field">
-                <span>Produto</span>
-                <div class="inline">
-                  <select id="oProduto"></select>
-                  <button id="btnAddItem" class="btnSquare" type="button" aria-label="Adicionar produto ao pedido">+</button>
-                </div>
-              </label>
+        <label class="field">
+          <span>Produto</span>
 
-              <div class="field">
-                <span>Itens do pedido</span>
-                <div class="chips" id="orderItems"></div>
-              </div>
+          <div class="inline">
+            <select id="oProduto"></select>
 
-              <label class="field">
-                <span>ETA (minutos)</span>
-                <input id="oEta" type="number" min="1" value="20" required />
-              </label>
+            <button
+              id="btnAddItem"
+              class="btnSquare"
+              type="button"
+              aria-label="Adicionar produto ao pedido"
+            >
+              +
+            </button>
+          </div>
+        </label>
 
-              <button class="btnPrimary btnPrimary--soft" type="submit">
-                <span class="btnIco">+</span> Criar Pedido
-              </button>
-            </form>
-          </section>
-
-          <section class="panel">
-            <h2>Lista de Pedidos (<span id="orderCount">0</span>)</h2>
-            <div class="orders" id="ordersList"></div>
-          </section>
+        <div class="field">
+          <span>Itens do pedido</span>
+          <div class="chips" id="orderItems"></div>
         </div>
-      </section>
+
+        <label class="field">
+          <span>ETA (minutos)</span>
+          <input id="oEta" type="number" min="1" max="240" value="20" required />
+        </label>
+
+        <button class="btnPrimary btnPrimary--soft" type="submit">
+          <span class="btnIco">+</span> Criar Pedido
+        </button>
+      </form>
+    </section>
+
+    <section class="panel">
+      <h2>Lista de Pedidos (<span id="orderCount">0</span>)</h2>
+
+      <div class="orderToolbar">
+        <input
+          id="orderSearch"
+          type="search"
+          placeholder="Buscar por nº do pedido, cliente ou produto"
+          autocomplete="off"
+        />
+
+        <select id="orderSort">
+          <option value="newest">Mais recentes</option>
+          <option value="oldest">Mais antigos</option>
+          <option value="highest">Maior valor</option>
+          <option value="lowest">Menor valor</option>
+          <option value="status">Status</option>
+        </select>
+
+        <div class="orderFilters" aria-label="Filtrar pedidos por status">
+          <button class="orderFilterBtn is-active" type="button" data-order-filter="all">Todos</button>
+          <button class="orderFilterBtn" type="button" data-order-filter="Em preparação">Em preparação</button>
+          <button class="orderFilterBtn" type="button" data-order-filter="A caminho">A caminho</button>
+          <button class="orderFilterBtn" type="button" data-order-filter="Entregue">Entregues</button>
+        </div>
+      </div>
+
+      <div class="orders" id="ordersList"></div>
+    </section>
+  </div>
+</section>
 
       <!-- CONFIG -->
       <section class="view" id="view-config">
