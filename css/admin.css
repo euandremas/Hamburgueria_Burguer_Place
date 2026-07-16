@@ -271,51 +271,86 @@ body.no-scroll{
   min-width: 0;
 }
 
-.cards{
-  display:grid;
+.cards {
+  display: grid;
   grid-template-columns: repeat(4, minmax(180px, 1fr));
   gap: 18px;
   margin-bottom: 18px;
-
-  /* ✅ FIX GRID */
   min-width: 0;
 }
 
-.kpi{
-  background: linear-gradient(180deg, var(--panel) 0%, var(--panelSoft) 100%);
+.kpi {
+  min-width: 0;
+  min-height: 150px;
+  padding: 18px 20px;
   border: 1.5px solid var(--line);
   border-radius: var(--r);
+  background: linear-gradient(180deg, var(--panel) 0%, var(--panelSoft) 100%);
   box-shadow: var(--shadow);
-  padding: 18px;
-
-  /* ✅ FIX GRID */
-  min-width: 0;
 }
-.kpi__top{
-  display:flex; align-items:center; justify-content:space-between;
+
+.kpi__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
   color: var(--muted);
+  font-size: 14px;
   font-weight: 700;
 }
-.kpi__val{
-  margin-top: 18px;
-  font-size: 34px;
-  font-weight: 800;
-}
-.kpi__ico{
-  width:34px;height:34px;border-radius: 10px;
-  display:grid;place-items:center;
-  background: rgba(0,0,0,.04);
-  color: var(--text);
-}
-.kpi__ico--blue{ background: rgba(37,99,235,.08); color: var(--blue); }
-.kpi__ico--orange{ background: rgba(249,115,22,.10); color: var(--orange); }
-.kpi__ico--green{ background: rgba(22,163,74,.10); color: var(--green); }
-.kpi__ico--violet{ background: rgba(124,58,237,.10); color: var(--violet); }
 
-.activity{
-  display:grid;
-  gap: 12px;
-  margin-top: 12px;
+.kpi__ico {
+  display: inline-flex;
+  flex: 0 0 52px;
+  width: 58px;
+  height: 58px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 15px;
+  background: rgba(0, 0, 0, 0.04);
+  color: var(--text);
+  font-size: 32px;
+  line-height: 1;
+}
+
+.kpi__ico svg {
+  width: 34px;
+  height: 34px;
+}
+
+.kpi__val{
+    margin-top:18px;
+    font-size:42px;
+    font-weight:900;
+    line-height:1;
+    letter-spacing:-1px;
+}
+
+.kpi__sub {
+  margin-top: 6px;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.kpi__ico--blue {
+  background: rgba(37, 99, 235, 0.12);
+  color: var(--blue);
+}
+
+.kpi__ico--orange {
+  background: rgba(249, 115, 22, 0.14);
+  color: var(--orange);
+}
+
+.kpi__ico--green {
+  background: rgba(22, 163, 74, 0.14);
+  color: var(--green);
+}
+
+.kpi__ico--violet {
+  background: rgba(124, 58, 237, 0.14);
+  color: var(--violet);
 }
 
 /* Atividade Recente com borda forte (modo claro) */
@@ -747,6 +782,9 @@ html[data-theme="dark"] .btnGhost:hover{ background: color-mix(in srgb, var(--pa
   .menu-toggle{
     display: inline-flex;
   }
+  .cards {
+  grid-template-columns: 1fr;
+}
 
   .sidebar{
     position: fixed;
@@ -977,4 +1015,42 @@ html[data-theme="dark"] .btnGhost:hover{ background: color-mix(in srgb, var(--pa
   background: #fff3a3;
   color: inherit;
   font-weight: 800;
+}
+.kpi{
+    transition:
+        transform .2s,
+        box-shadow .2s;
+}
+.kpi:hover{
+    transform:translateY(-4px);
+    box-shadow:0 12px 28px rgba(0,0,0,.12);
+}
+/* ===== Dashboard Chart.js ===== */
+
+.dashboardChartPanel {
+  margin-bottom: 18px;
+}
+
+.dashboardChartHead h2 {
+  margin: 0;
+}
+
+.dashboardChartBox--line {
+    height: 320px;
+}
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+#revenueChart {
+    width: 100%;
+    height: 320px;
+}
+@media (max-width: 768px) {
+  .dashboardChartBox {
+    height: 280px;
+  }
+}
+.dashboardChartBox--bar {
+  height: 320px;
 }

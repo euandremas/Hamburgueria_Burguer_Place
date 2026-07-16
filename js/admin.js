@@ -23,6 +23,13 @@ let pendingItems = [];
 let orderSearchTerm = "";
 let orderSortMode = "newest";
 let orderStatusFilter = "all";
+let ordersStatusChart = null;
+let topProductsChart = null;
+let revenueChart = null;
+
+if (typeof Chart !== "undefined" && typeof ChartDataLabels !== "undefined") {
+  Chart.register(ChartDataLabels);
+}
 
   function mapProductFromApi(product) {
   return {
@@ -199,11 +206,355 @@ async function loadOrdersFromApi() {
 }
 
     if (name === "dashboard") {
-      refreshDashboard();
-    }
+    loadDashboardFromApi();
+  }
+}
+
+const centerTextPlugin = {
+  id: "centerText",
+
+  afterDraw(chart) {
+    const { ctx, chartArea } = chart;
+
+    if (!chartArea) return;
+
+    const total = chart.data.datasets[0].data.reduce(
+      (sum, value) => sum + Number(value || 0),
+      0
+    );
+
+    const centerX = (chartArea.left + chartArea.right) / 2;
+    const centerY = (chartArea.top + chartArea.bottom) / 2;
+
+    ctx.save();
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+
+    ctx.fillStyle = getComputedStyle(document.documentElement)
+      .getPropertyValue("--text")
+      .trim() || "#111";
+
+    ctx.font = "900 32px Arial";
+    ctx.fillText(String(total), centerX, centerY - 10);
+
+    ctx.fillStyle = getComputedStyle(document.documentElement)
+      .getPropertyValue("--muted")
+      .trim() || "#666";
+
+    ctx.font = "700 12px Arial";
+    ctx.fillText(total === 1 ? "PEDIDO" : "PEDIDOS", centerX, centerY + 18);
+
+    ctx.restore();
+  },
+};
+
+function renderTopProductsChart(topProducts) {
+  const canvas = document.getElementById("topProductsChart");
+
+  if (!canvas || typeof Chart === "undefined") return;
+
+  const products = Array.isArray(topProducts)
+    ? topProducts
+        .map((product) => ({
+          name: product.name,
+          quantity: Number(product.quantity) || 0,
+        }))
+        .sort((a, b) => b.quantity - a.quantity)
+    : [];
+
+  const labels = products.map((product) => product.name);
+  const values = products.map((product) => product.quantity);
+
+  const totalSold = values.reduce((sum, value) => sum + value, 0);
+
+  if (topProductsChart) {
+    topProductsChart.data.labels = labels;
+    topProductsChart.data.datasets[0].data = values;
+    topProductsChart.update();
+    return;
   }
 
-  function setupNav() {
+  topProductsChart = new Chart(canvas, {
+    type: "bar",
+
+    data: {
+      labels,
+      datasets: [
+        {
+          label: "Unidades vendidas",
+          data: values,
+          backgroundColor: "#ff5a00",
+          borderRadius: 14,
+          borderSkipped: false,
+          barThickness: 34,
+          maxBarThickness: 38,
+        },
+      ],
+    },
+
+    options: {
+      indexAxis: "y",
+      responsive: true,
+      maintainAspectRatio: false,
+
+      layout: {
+        padding: {
+          right: 44,
+        },
+      },
+
+      plugins: {
+        legend: {
+          display: false,
+        },
+
+        datalabels: {
+          anchor: "end",
+          align: "end",
+          clamp: true,
+          color: "#111827",
+          font: {
+            size: 13,
+            weight: "bold",
+          },
+          formatter(value) {
+            return value;
+          },
+        },
+
+        tooltip: {
+          callbacks: {
+            title(items) {
+              return `🍔 ${items[0].label}`;
+            },
+
+            label(context) {
+              const value = Number(context.raw) || 0;
+
+              return `${value} ${
+                value === 1 ? "unidade vendida" : "unidades vendidas"
+              }`;
+            },
+
+            afterLabel(context) {
+              const value = Number(context.raw) || 0;
+
+              const percentage = totalSold
+                ? Math.round((value / totalSold) * 100)
+                : 0;
+
+              return `${percentage}% das vendas`;
+            },
+          },
+        },
+      },
+
+      scales: {
+        x: {
+          beginAtZero: true,
+
+          ticks: {
+            precision: 0,
+            stepSize: 1,
+          },
+
+          grid: {
+            color: "rgba(15, 23, 42, 0.06)",
+          },
+
+          border: {
+            display: false,
+          },
+        },
+
+        y: {
+          grid: {
+            display: false,
+          },
+
+          border: {
+            display: false,
+          },
+
+          ticks: {
+            color: "#4f5a70",
+            font: {
+              size: 13,
+              weight: "600",
+            },
+          },
+        },
+      },
+    },
+  });
+}
+
+function renderRevenueChart(revenueByDay) {
+  const canvas = document.getElementById("revenueChart");
+
+  if (!canvas || typeof Chart === "undefined") return;
+
+  const labels = revenueByDay.map((item) => item.label);
+  const values = revenueByDay.map((item) => Number(item.revenue));
+
+  if (revenueChart) {
+    revenueChart.data.labels = labels;
+    revenueChart.data.datasets[0].data = values;
+    revenueChart.update();
+    return;
+  }
+
+  revenueChart = new Chart(canvas, {
+    type: "line",
+
+    data: {
+      labels,
+
+      datasets: [
+        {
+          label: "Receita",
+
+          data: values,
+
+          borderColor: "#ff6500",
+
+          backgroundColor: "rgba(255,101,0,.15)",
+
+          fill: true,
+
+          tension: .35,
+
+          pointRadius: 5,
+
+          pointHoverRadius: 7,
+
+          pointBackgroundColor: "#ff6500",
+
+          pointBorderWidth: 2,
+
+          pointBorderColor: "#ffffff",
+        },
+      ],
+    },
+
+    options: {
+      responsive: true,
+
+      maintainAspectRatio: false,
+
+      plugins: {
+        legend: {
+          display: false,
+        },
+
+        tooltip: {
+          callbacks: {
+            label(context) {
+              return "Receita: " + Store.moneyBR(context.raw);
+            },
+          },
+        },
+      },
+
+      scales: {
+        y: {
+          beginAtZero: true,
+
+          ticks: {
+            callback(value) {
+              return "R$ " + value;
+            },
+          },
+
+          grid: {
+            color: "rgba(15,23,42,.06)",
+          },
+        },
+
+        x: {
+          grid: {
+            display: false,
+          },
+        },
+      },
+    },
+  });
+}
+
+function renderOrdersStatusChart(dashboard) {
+  const canvas = document.getElementById("ordersStatusChart");
+
+  if (!canvas || typeof Chart === "undefined") return;
+
+  const chartData = [
+    Number(dashboard.preparingOrders) || 0,
+    Number(dashboard.onTheWayOrders) || 0,
+    Number(dashboard.deliveredOrders) || 0,
+  ];
+
+  if (ordersStatusChart) {
+    ordersStatusChart.data.datasets[0].data = chartData;
+    ordersStatusChart.update();
+    return;
+  }
+
+  ordersStatusChart = new Chart(canvas, {
+    type: "doughnut",
+
+    plugins: [centerTextPlugin],
+
+    data: {
+      labels: ["Em preparação", "A caminho", "Entregues"],
+      datasets: [
+        {
+          data: chartData,
+          radius: "72%",
+          backgroundColor: ["#f97316", "#2563eb", "#16a34a"],
+          borderWidth: 0,
+          hoverOffset: 8,
+        },
+      ],
+    },
+
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      cutout: "68%",
+
+      plugins: {
+        legend: {
+          position: "right",
+          labels: {
+            usePointStyle: true,
+            pointStyle: "circle",
+            padding: 18,
+          },
+        },
+
+        tooltip: {
+          callbacks: {
+            label(context) {
+              const value = Number(context.raw) || 0;
+
+              const total = context.dataset.data.reduce(
+                (sum, item) => sum + Number(item || 0),
+                0
+              );
+
+              const percentage = total
+                ? Math.round((value / total) * 100)
+                : 0;
+
+              return `${context.label}: ${value} (${percentage}%)`;
+            },
+          },
+        },
+      },
+    },
+  });
+}
+
+function setupNav() {
     document.querySelectorAll(".nav__item").forEach((btn) => {
       btn.addEventListener("click", () => setActiveView(btn.dataset.view));
     });
@@ -214,48 +565,54 @@ async function loadOrdersFromApi() {
   }
 
   function refreshDashboard() {
-    const total = s.pedidos.length;
+  const list = document.getElementById("activityList");
+  if (!list) return;
 
-    // Em andamento = Em preparação + A caminho
-    const inProgress = s.pedidos.filter((o) => o.status !== "Entregue").length;
+  const icon = (type) => {
+    if (type === "done") return "✓";
+    if (type === "prep") return "⏱";
+    return "🛒";
+  };
 
-    const done = s.pedidos.filter((o) => o.status === "Entregue").length;
-    const produtos = s.produtos.length;
+  const items = (s.activities || []).slice(0, 5);
 
-    document.getElementById("kpiTotalPedidos").textContent = String(total);
-    document.getElementById("kpiPreparacao").textContent = String(inProgress);
-    document.getElementById("kpiEntregues").textContent = String(done);
-    document.getElementById("kpiProdutos").textContent = String(produtos);
+  if (!items.length) {
+    list.innerHTML = `
+      <div class="emptyState">
+        <strong>Nenhuma atividade recente.</strong>
+        <span>As movimentações do sistema aparecerão aqui.</span>
+      </div>
+    `;
+    return;
+  }
 
-    const list = document.getElementById("activityList");
-    if (!list) return;
+  list.innerHTML = items
+    .map((activity) => {
+      const className =
+        activity.type === "done"
+          ? "act--green"
+          : activity.type === "prep"
+            ? "act--orange"
+            : "act--blue";
 
-    const icon = (type) => {
-      if (type === "done") return "✓";
-      if (type === "prep") return "⏱";
-      return "🛒";
-    };
+      return `
+        <div class="actItem ${className}">
+          <div class="actItem__ico">${icon(activity.type)}</div>
 
-    // Limita para ficar fiel ao layout (3 itens no painel)
-    const items = (s.activities || []).slice(0, 3);
+          <div>
+            <div class="actItem__t">
+              ${UI.escapeHtml(activity.title)}
+            </div>
 
-    list.innerHTML = items
-      .map((a) => {
-        const cls =
-          a.type === "done" ? "act--green" : a.type === "prep" ? "act--orange" : "act--blue";
-
-        return `
-          <div class="actItem ${cls}">
-            <div class="actItem__ico">${icon(a.type)}</div>
-            <div>
-              <div class="actItem__t">${UI.escapeHtml(a.title)}</div>
-              <div class="actItem__s">${UI.escapeHtml(Store.activitySubtitle(a))}</div>
+            <div class="actItem__s">
+              ${UI.escapeHtml(activity.subtitle || "")}
             </div>
           </div>
-        `;
-      })
-      .join("");
-  }
+        </div>
+      `;
+    })
+    .join("");
+}
 
   // ---------- PRODUTOS ----------
   function renderProdutos() {
@@ -314,6 +671,7 @@ async function loadOrdersFromApi() {
       await API.deleteProduct(id);
       UI.toast("Produto removido.");
       await loadProdutosFromApi();
+      await loadDashboardFromApi();
     } catch (err) {
       UI.toast(err.message || "Erro ao remover produto.");
     }
@@ -557,8 +915,9 @@ const preview = document.getElementById("dropPreview");
 if (preview) preview.innerHTML = "";
 
 await loadProdutosFromApi();
+await loadDashboardFromApi();
 
-  await loadProdutosFromApi();
+ 
 } catch (err) {
   UI.toast(err.message || "Erro ao cadastrar produto.");
 } finally {
@@ -650,6 +1009,7 @@ function renderClientes() {
     await API.deleteCustomer(id);
     UI.toast("Cliente removido.");
     await loadClientesFromApi();
+    await loadDashboardFromApi();
   } catch (err) {
   UI.toast(err.message || "Erro ao remover cliente.");
 }
@@ -727,6 +1087,8 @@ if (btn) {
   setCepHint("Digite o CEP e clique em Buscar. Endereço vem automático 😎", "muted");
 
   await loadClientesFromApi();
+  await loadDashboardFromApi();
+
 } catch (err) {
   UI.toast(err.message || "Erro ao cadastrar cliente.");
 } finally {
@@ -869,7 +1231,41 @@ async function loadUsuariosFromApi() {
   refreshDashboard();
 
 }
+async function loadDashboardFromApi() {
+  try {
+    const response = await API.getDashboard();
+    const dashboard = response.data;
 
+    document.getElementById("kpiTotalPedidos").textContent = String(dashboard.totalOrders);
+    document.getElementById("kpiPreparacao").textContent = String(dashboard.preparingOrders);
+    document.getElementById("kpiEntregues").textContent = String(dashboard.deliveredOrders);
+    document.getElementById("kpiProdutos").textContent = String(dashboard.totalProducts);
+    document.getElementById("kpiOnTheWay").textContent = String(dashboard.onTheWayOrders);
+    document.getElementById("kpiCustomers").textContent = String(dashboard.totalCustomers);
+    document.getElementById("kpiRevenue").textContent = Store.moneyBR(dashboard.totalRevenue);
+    document.getElementById("kpiAverageTicket").textContent = Store.moneyBR(dashboard.averageTicket);
+    document.getElementById("kpiBestSeller").textContent =
+  dashboard.bestSeller.name;
+
+document.getElementById("kpiBestSellerQty").textContent =
+  `${dashboard.bestSeller.quantity} vendidos`;
+
+document.getElementById("kpiTopCustomer").textContent =
+  dashboard.topCustomer.name;
+
+document.getElementById("kpiTopCustomerOrders").textContent =
+  `${dashboard.topCustomer.orders} pedidos`;
+
+  renderOrdersStatusChart(dashboard);
+  renderTopProductsChart(dashboard.topProducts);
+  renderRevenueChart(dashboard.revenueByDay);   
+  
+    s.activities = dashboard.recentActivities || [];
+    refreshDashboard();
+  } catch (err) {
+    UI.toast(err.message || "Erro ao carregar o dashboard.");
+  }
+}
 function renderUsuarios() {
 
   const users = s.usuarios || [];
@@ -1471,6 +1867,7 @@ if (btn) {
 
         UI.toast(`Pedido marcado como "${to}".`);
         await loadOrdersFromApi();
+        await loadDashboardFromApi();
       } catch (err) {
         UI.toast(err.message || "Erro ao atualizar status.");
 
@@ -1505,7 +1902,7 @@ if (btn) {
       try {
         await API.updateOrderEta(id, etaMin);
         UI.toast("Tempo estimado atualizado.");
-        await loadOrdersFromApi();
+        await loadOrdersFromApi();       
       } catch (err) {
         input.value = originalValue;
         UI.toast(err.message || "Erro ao atualizar o tempo estimado.");
@@ -1544,6 +1941,7 @@ if (btn) {
 
         UI.toast("Pedido reaberto com sucesso.");
         await loadOrdersFromApi();
+        await loadDashboardFromApi();
       } catch (err) {
         UI.toast(err.message || "Erro ao reabrir pedido.");
 
@@ -1666,6 +2064,7 @@ function highlightSearchText(text, searchTerm) {
 
       refreshOrderInputs();
       await loadOrdersFromApi();
+      await loadDashboardFromApi();
     } catch (err) {
       UI.toast(err.message || "Erro ao criar pedido.");
     } finally {
@@ -1720,6 +2119,7 @@ function highlightSearchText(text, searchTerm) {
 
    loadUsuariosFromApi();
    loadOrdersFromApi();
+   loadDashboardFromApi();
   }
 
   return { init };

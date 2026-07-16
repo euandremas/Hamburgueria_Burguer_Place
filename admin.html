@@ -137,7 +137,7 @@
           <h1>Painel</h1>
           <p>Visão geral do sistema</p>
         </header>
-
+        
         <div class="cards">
           <div class="kpi">
             <div class="kpi__top">
@@ -191,7 +191,112 @@
             </div>
             <div class="kpi__val" id="kpiProdutos">0</div>
           </div>
-        </div>
+        
+        <div class="kpi">
+  <div class="kpi__top">
+    <span>Pedidos a Caminho</span>
+    <span class="kpi__ico kpi__ico--orange" aria-hidden="true">🚚</span>
+  </div>
+
+  <div class="kpi__val" id="kpiOnTheWay">0</div>
+</div>
+
+<div class="kpi">
+  <div class="kpi__top">
+    <span>Clientes Cadastrados</span>
+    <span class="kpi__ico kpi__ico--blue" aria-hidden="true">👥</span>
+  </div>
+
+  <div class="kpi__val" id="kpiCustomers">0</div>
+</div>
+
+<div class="kpi">
+  <div class="kpi__top">
+    <span>Receita Total</span>
+    <span class="kpi__ico kpi__ico--green" aria-hidden="true">💰</span>
+  </div>
+
+  <div class="kpi__val" id="kpiRevenue">R$ 0,00</div>
+</div>
+
+<div class="kpi">
+  <div class="kpi__top">
+    <span>Ticket Médio</span>
+    <span class="kpi__ico kpi__ico--violet" aria-hidden="true">📊</span>
+  </div>
+
+  <div class="kpi__val" id="kpiAverageTicket">R$ 0,00</div>
+</div>
+<div class="kpi">
+  <div class="kpi__top">
+    <span>Produto campeão</span>
+    <span class="kpi__ico">🍔</span>
+  </div>
+
+  <div class="kpi__val" id="kpiBestSeller">
+    —
+  </div>
+
+  <div class="kpi__sub" id="kpiBestSellerQty">
+    0 vendidos
+  </div>
+</div>
+
+<div class="kpi">
+  <div class="kpi__top">
+    <span>Cliente destaque</span>
+    <span class="kpi__ico">👑</span>
+  </div>
+
+  <div class="kpi__val" id="kpiTopCustomer">
+    —
+  </div>
+
+  <div class="kpi__sub" id="kpiTopCustomerOrders">
+    0 pedidos
+  </div>
+</div>
+
+</div>
+
+<section class="panel dashboardChartPanel">
+  <div class="dashboardChartHead">
+    <div>
+      <h2>Pedidos por Status</h2>
+      <p class="muted">Distribuição atual dos pedidos</p>
+    </div>
+  </div>
+
+  <div class="dashboardChartBox">
+    <canvas id="ordersStatusChart"></canvas>
+  </div>
+</section>
+
+<section class="panel dashboardChartPanel">
+  <div class="dashboardChartHead">
+    <div>
+      <h2>Produtos Mais Vendidos</h2>
+      <p class="muted">Quantidade total vendida por produto</p>
+    </div>
+  </div>
+
+  <div class="dashboardChartBox dashboardChartBox--bar">
+    <canvas id="topProductsChart"></canvas>
+  </div>
+</section>
+
+<section class="panel dashboardChartPanel">
+  <div class="dashboardChartHead">
+    <div>
+      <h2>Receita dos Últimos 7 Dias</h2>
+      <p class="muted">Evolução diária do faturamento</p>
+    </div>
+  </div>
+
+  <div class="dashboardChartBox dashboardChartBox--line">
+    <canvas id="revenueChart"></canvas>
+  </div>
+</section>
 
         <section class="panel">
           <h2>Atividade Recente</h2>
@@ -595,6 +700,8 @@
 <script src="./js/api.js"></script>
 <script src="./js/auth.js"></script>
 <script src="./js/store.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
 <script src="./js/admin.js"></script>
 
 <script>
