@@ -248,10 +248,22 @@ const centerTextPlugin = {
   },
 };
 
+function getChartThemeColors() {
+  const styles = getComputedStyle(document.documentElement);
+
+  return {
+    text: styles.getPropertyValue("--text").trim() || "#111827",
+    muted: styles.getPropertyValue("--muted").trim() || "#4f5a70",
+    grid: styles.getPropertyValue("--line").trim() || "#d1d5db",
+  };
+}
+
 function renderTopProductsChart(topProducts) {
   const canvas = document.getElementById("topProductsChart");
-
+  
   if (!canvas || typeof Chart === "undefined") return;
+
+  const themeColors = getChartThemeColors();
 
   const products = Array.isArray(topProducts)
     ? topProducts
@@ -292,100 +304,101 @@ function renderTopProductsChart(topProducts) {
       ],
     },
 
-    options: {
-      indexAxis: "y",
-      responsive: true,
-      maintainAspectRatio: false,
+   options: {
+  indexAxis: "y",
+  responsive: true,
+  maintainAspectRatio: false,
 
-      layout: {
-        padding: {
-          right: 44,
-        },
+  layout: {
+    padding: {
+      right: 44,
+    },
+  },
+
+  plugins: {
+    legend: {
+      display: false,
+    },
+
+    datalabels: {
+      anchor: "end",
+      align: "end",
+      clamp: true,
+      color: themeColors.text,
+      font: {
+        size: 13,
+        weight: "bold",
       },
-
-      plugins: {
-        legend: {
-          display: false,
-        },
-
-        datalabels: {
-          anchor: "end",
-          align: "end",
-          clamp: true,
-          color: "#111827",
-          font: {
-            size: 13,
-            weight: "bold",
-          },
-          formatter(value) {
-            return value;
-          },
-        },
-
-        tooltip: {
-          callbacks: {
-            title(items) {
-              return `🍔 ${items[0].label}`;
-            },
-
-            label(context) {
-              const value = Number(context.raw) || 0;
-
-              return `${value} ${
-                value === 1 ? "unidade vendida" : "unidades vendidas"
-              }`;
-            },
-
-            afterLabel(context) {
-              const value = Number(context.raw) || 0;
-
-              const percentage = totalSold
-                ? Math.round((value / totalSold) * 100)
-                : 0;
-
-              return `${percentage}% das vendas`;
-            },
-          },
-        },
+      formatter(value) {
+        return value;
       },
+    },
 
-      scales: {
-        x: {
-          beginAtZero: true,
-
-          ticks: {
-            precision: 0,
-            stepSize: 1,
-          },
-
-          grid: {
-            color: "rgba(15, 23, 42, 0.06)",
-          },
-
-          border: {
-            display: false,
-          },
+    tooltip: {
+      callbacks: {
+        title(items) {
+          return `🍔 ${items[0].label}`;
         },
 
-        y: {
-          grid: {
-            display: false,
-          },
+        label(context) {
+          const value = Number(context.raw) || 0;
 
-          border: {
-            display: false,
-          },
+          return `${value} ${
+            value === 1 ? "unidade vendida" : "unidades vendidas"
+          }`;
+        },
 
-          ticks: {
-            color: "#4f5a70",
-            font: {
-              size: 13,
-              weight: "600",
-            },
-          },
+        afterLabel(context) {
+          const value = Number(context.raw) || 0;
+
+          const percentage = totalSold
+            ? Math.round((value / totalSold) * 100)
+            : 0;
+
+          return `${percentage}% das vendas`;
         },
       },
     },
+  },
+
+  scales: {
+   x: {
+  beginAtZero: true,
+
+  ticks: {
+    color: themeColors.muted,
+    precision: 0,
+    stepSize: 1,
+  },
+
+  grid: {
+    color: themeColors.grid,
+  },
+
+  border: {
+    display: false,
+  },
+},
+
+    y: {
+  grid: {
+    display: false,
+  },
+
+  border: {
+    display: false,
+  },
+
+  ticks: {
+    color: themeColors.muted,
+    font: {
+      size: 13,
+      weight: "600",
+    },
+  },
+},
+  },
+},
   });
 }
 
@@ -396,6 +409,18 @@ function renderRevenueChart(revenueByDay) {
 
   const labels = revenueByDay.map((item) => item.label);
   const values = revenueByDay.map((item) => Number(item.revenue));
+  const themeColors = getChartThemeColors();
+  const ctx = canvas.getContext("2d");
+
+  const revenueGradient = ctx.createLinearGradient(
+  0,
+  0,
+  0,
+  canvas.parentElement?.clientHeight || 320
+);
+
+revenueGradient.addColorStop(0, "rgba(255, 101, 0, 0.30)");
+revenueGradient.addColorStop(1, "rgba(255, 101, 0, 0.02)");
 
   if (revenueChart) {
     revenueChart.data.labels = labels;
@@ -411,78 +436,112 @@ function renderRevenueChart(revenueByDay) {
       labels,
 
       datasets: [
-        {
-          label: "Receita",
-
-          data: values,
-
-          borderColor: "#ff6500",
-
-          backgroundColor: "rgba(255,101,0,.15)",
-
-          fill: true,
-
-          tension: .35,
-
-          pointRadius: 5,
-
-          pointHoverRadius: 7,
-
-          pointBackgroundColor: "#ff6500",
-
-          pointBorderWidth: 2,
-
-          pointBorderColor: "#ffffff",
-        },
-      ],
+  {
+    label: "Receita",
+    data: values,
+    borderColor: "#ff6500",
+    borderWidth: 3,
+    backgroundColor: revenueGradient,
+    fill: true,
+    tension: 0.25,
+    pointRadius: 5,
+    pointHoverRadius: 8,
+    pointHitRadius: 18,
+    pointBackgroundColor: "#ff6500",
+    pointBorderWidth: 2,
+    pointBorderColor: "#ffffff",
+  },
+],
     },
 
     options: {
-      responsive: true,
+  responsive: true,
+  maintainAspectRatio: false,
 
-      maintainAspectRatio: false,
+  layout: {
+    padding: {
+      top: 28,
+    },
+  },
 
-      plugins: {
-        legend: {
-          display: false,
-        },
+  plugins: {
+    legend: {
+      display: false,
+    },
 
-        tooltip: {
-          callbacks: {
-            label(context) {
-              return "Receita: " + Store.moneyBR(context.raw);
-            },
-          },
-        },
+    datalabels: {
+      display(context) {
+        const value = Number(context.dataset.data[context.dataIndex]) || 0;
+        const isMobile = context.chart.width <= 480;
+
+        return value > 0 && !isMobile;
       },
+      anchor: "end",
+      align: "top",
+      offset: 10,
+      clamp: false,
+      clip: false,
+      color: themeColors.text,
+      font: {
+        size: 14,
+        weight: "bold",
+      },
+      formatter(value) {
+        return Store.moneyBR(Number(value) || 0);
+      },
+    },
 
-      scales: {
-        y: {
-          beginAtZero: true,
-
-          ticks: {
-            callback(value) {
-              return "R$ " + value;
-            },
-          },
-
-          grid: {
-            color: "rgba(15,23,42,.06)",
-          },
-        },
-
-        x: {
-          grid: {
-            display: false,
-          },
+    tooltip: {
+      callbacks: {
+        label(context) {
+          return "Receita: " + Store.moneyBR(context.raw);
         },
       },
     },
-  });
+  },
+
+  scales: {
+    y: {
+      beginAtZero: true,
+
+      ticks: {
+        color: themeColors.muted,
+
+        callback(value) {
+          return "R$ " + value;
+        },
+      },
+
+      grid: {
+        color: themeColors.grid,
+      },
+
+      border: {
+        display: false,
+      },
+    },
+
+    x: {
+      ticks: {
+        color: themeColors.muted,
+      },
+
+      grid: {
+        display: false,
+      },
+
+      border: {
+        display: false,
+      },
+    },
+  },
+},
+    });
 }
 
 function renderOrdersStatusChart(dashboard) {
   const canvas = document.getElementById("ordersStatusChart");
+  const themeColors = getChartThemeColors();
 
   if (!canvas || typeof Chart === "undefined") return;
 
@@ -522,14 +581,16 @@ function renderOrdersStatusChart(dashboard) {
       cutout: "68%",
 
       plugins: {
-        legend: {
-          position: "right",
-          labels: {
-            usePointStyle: true,
-            pointStyle: "circle",
-            padding: 18,
-          },
-        },
+       legend: {
+  position: "right",
+
+  labels: {
+    color: themeColors.muted,
+    usePointStyle: true,
+    pointStyle: "circle",
+    padding: 18,
+  },
+},
 
         tooltip: {
           callbacks: {
@@ -1231,19 +1292,84 @@ async function loadUsuariosFromApi() {
   refreshDashboard();
 
 }
+
+function animateValue(elementId, finalValue, formatter = (v) => v) {
+  const element = document.getElementById(elementId);
+
+  if (!element) return;
+
+  const duration = 800;
+  const start = performance.now();
+
+  const isCurrency = typeof finalValue === "number" && !Number.isInteger(finalValue);
+
+  function update(now) {
+    const progress = Math.min((now - start) / duration, 1);
+
+    const value = finalValue * progress;
+
+    element.textContent = formatter(
+      isCurrency ? value : Math.round(value)
+    );
+
+    if (progress < 1) {
+      requestAnimationFrame(update);
+    }
+  }
+
+  requestAnimationFrame(update);
+}
+  function setDashboardLoading(isLoading) {
+  document
+    .getElementById("view-dashboard")
+    ?.classList.toggle("dashboard-loading", isLoading);
+}
+
 async function loadDashboardFromApi() {
+  setDashboardLoading(true);
+
   try {
     const response = await API.getDashboard();
     const dashboard = response.data;
 
-    document.getElementById("kpiTotalPedidos").textContent = String(dashboard.totalOrders);
-    document.getElementById("kpiPreparacao").textContent = String(dashboard.preparingOrders);
-    document.getElementById("kpiEntregues").textContent = String(dashboard.deliveredOrders);
-    document.getElementById("kpiProdutos").textContent = String(dashboard.totalProducts);
-    document.getElementById("kpiOnTheWay").textContent = String(dashboard.onTheWayOrders);
-    document.getElementById("kpiCustomers").textContent = String(dashboard.totalCustomers);
-    document.getElementById("kpiRevenue").textContent = Store.moneyBR(dashboard.totalRevenue);
-    document.getElementById("kpiAverageTicket").textContent = Store.moneyBR(dashboard.averageTicket);
+    animateValue(
+  "kpiTotalPedidos",
+  dashboard.totalOrders
+);
+    animateValue(
+    "kpiPreparacao",
+    dashboard.preparingOrders
+);
+
+animateValue(
+    "kpiEntregues",
+    dashboard.deliveredOrders
+);
+
+animateValue(
+    "kpiProdutos",
+    dashboard.totalProducts
+);
+
+animateValue(
+    "kpiOnTheWay",
+    dashboard.onTheWayOrders
+);
+
+animateValue(
+    "kpiCustomers",
+    dashboard.totalCustomers
+);
+    animateValue(
+    "kpiRevenue",
+    dashboard.totalRevenue,
+    Store.moneyBR
+);
+    animateValue(
+    "kpiAverageTicket",
+    dashboard.averageTicket,
+    Store.moneyBR
+);
     document.getElementById("kpiBestSeller").textContent =
   dashboard.bestSeller.name;
 
@@ -1264,6 +1390,8 @@ document.getElementById("kpiTopCustomerOrders").textContent =
     refreshDashboard();
   } catch (err) {
     UI.toast(err.message || "Erro ao carregar o dashboard.");
+  }finally {
+    setDashboardLoading(false);
   }
 }
 function renderUsuarios() {
@@ -2086,14 +2214,29 @@ function highlightSearchText(text, searchTerm) {
     document.documentElement.setAttribute("data-theme", saved);
     toggle.checked = saved === "dark";
 
-    toggle.addEventListener("change", () => {
+     toggle.addEventListener("change", () => {
       const theme = toggle.checked ? "dark" : "light";
-      document.documentElement.setAttribute("data-theme", theme);
-      localStorage.setItem("theme", theme);
-      UI.toast(theme === "dark" ? "Modo escuro ativado." : "Modo claro ativado.");
-    });
-  }
 
+    document.documentElement.setAttribute("data-theme", theme);
+    localStorage.setItem("theme", theme);
+
+    ordersStatusChart?.destroy();
+    topProductsChart?.destroy();
+    revenueChart?.destroy();
+
+    ordersStatusChart = null;
+    topProductsChart = null;
+    revenueChart = null;
+
+    loadDashboardFromApi();
+
+    UI.toast(
+      theme === "dark"
+        ? "Modo escuro ativado."
+        : "Modo claro ativado."
+    );
+  });
+}
   function init() {
     Store.seedDemoIfEmpty();
 
