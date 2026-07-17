@@ -8,6 +8,8 @@ yarn-error.log*
 
 # Arquivos de ambiente
 .env
+.env.*
+!.env.example
 
 # Sistema operacional
 .DS_Store
