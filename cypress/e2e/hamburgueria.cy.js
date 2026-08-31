@@ -1,35 +1,83 @@
-describe('Hamburgueria WebApp - Testes em Produção', () => {
-
-  const baseUrl = 'https://euandremas.github.io/hamburgueria-webapp';
-
-  it('1) Deve carregar a página inicial (index.html)', () => {
-    cy.visit(`${baseUrl}/index.html`);
-    cy.get('body').should('be.visible');
+describe("Burger Place - Front-end", () => {
+  beforeEach(() => {
+    cy.visit("/index.html");
   });
 
-  it('2) Deve carregar a área administrativa (admin.html)', () => {
-    cy.visit(`${baseUrl}/admin.html`);
-    cy.get('body').should('be.visible');
+  it("deve renderizar a tela de login", () => {
+    cy.contains("Burger Place Admin").should("be.visible");
+    cy.contains("Acesso Administrativo").should("be.visible");
+
+    cy.get("#username").should("be.visible");
+    cy.get("#password").should("be.visible");
+    cy.get("button[type='submit']").should("contain", "Entrar");
   });
 
-  it('3) Deve disponibilizar o manifest do PWA', () => {
-    cy.request(`${baseUrl}/manifest.webmanifest`)
-      .its('status')
-      .should('eq', 200);
+  it("deve permitir digitação nos campos de login", () => {
+    cy.get("#username")
+      .type("admin")
+      .should("have.value", "admin");
+
+    cy.get("#password")
+      .type("123456")
+      .should("have.value", "123456");
   });
 
-  it('4) Deve disponibilizar o Service Worker', () => {
-    cy.request(`${baseUrl}/sw.js`)
-      .its('status')
-      .should('eq', 200);
+  it("deve alternar a visibilidade da senha ao clicar no botão", () => {
+    cy.get("#password")
+      .type("123456")
+      .should("have.attr", "type", "password");
+
+    cy.get(".togglePassword").click();
+
+    cy.get("#password")
+      .should("have.attr", "type", "text");
+
+    cy.get(".togglePassword")
+      .should("have.attr", "aria-label", "Ocultar senha");
+
+    cy.get(".togglePassword").click();
+
+    cy.get("#password")
+      .should("have.attr", "type", "password");
   });
 
-  it('5) Deve responder à BrasilAPI (CEP válido)', () => {
-    cy.request('https://brasilapi.com.br/api/cep/v1/01001000')
-      .then((response) => {
-        expect(response.status).to.eq(200);
-        expect(response.body).to.have.property('cep');
+  it("deve realizar login utilizando API mockada", () => {
+    cy.clock();
+
+    cy.intercept(
+      "POST",
+      "http://localhost:3333/auth/login",
+      {
+        statusCode: 200,
+        body: {
+          success: true,
+          data: {
+            user: {
+              id: 1,
+              name: "Administrador Teste",
+              username: "admin",
+              role: "admin"
+            },
+            token: "token-cypress"
+          }
+        }
+      }
+    ).as("login");
+
+    cy.get("#username").type("admin");
+    cy.get("#password").type("123456");
+    cy.get("button[type='submit']").click();
+
+    cy.wait("@login")
+      .its("request.body")
+      .should("deep.equal", {
+        username: "admin",
+        password: "123456"
       });
-  });
 
+    cy.window().should((win) => {
+      expect(win.localStorage.getItem("auth")).to.eq("true");
+      expect(win.localStorage.getItem("token")).to.eq("token-cypress");
+    });
+  });
 });
