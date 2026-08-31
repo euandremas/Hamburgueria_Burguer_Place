@@ -9,9 +9,18 @@
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
     "prisma:studio": "prisma studio",
-    "seed": "node prisma/seed.js"
+    "seed": "node prisma/seed.js",
+    "test": "jest --runInBand",
+    "test:coverage": "jest --coverage --runInBand"
   },
-  "keywords": ["node", "express", "prisma", "postgresql", "jwt", "ppe3"],
+  "keywords": [
+    "node",
+    "express",
+    "prisma",
+    "postgresql",
+    "jwt",
+    "ppe3"
+  ],
   "author": "André Moreira Araújo dos Santos",
   "license": "MIT",
   "dependencies": {
@@ -23,7 +32,9 @@
     "jsonwebtoken": "^9.0.2"
   },
   "devDependencies": {
+    "jest": "^30.5.0",
     "nodemon": "^3.1.7",
-    "prisma": "^5.22.0"
+    "prisma": "^5.22.0",
+    "supertest": "^7.2.2"
   }
 }
