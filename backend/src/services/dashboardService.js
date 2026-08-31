@@ -79,46 +79,7 @@ function calculateTopProducts(orders, limit = 5) {
     .sort((a, b) => b.quantity - a.quantity)
     .slice(0, limit);
 }
-function calculateRevenueByDay(orders, days = 7) {
-  const now = new Date();
 
-  const result = Array.from({ length: days }, (_, index) => {
-    const date = new Date(now);
-    date.setDate(now.getDate() - (days - 1 - index));
-    date.setHours(0, 0, 0, 0);
-
-    return {
-      date,
-      label: date.toLocaleDateString("pt-BR", {
-        day: "2-digit",
-        month: "2-digit",
-      }),
-      revenue: 0,
-    };
-  });
-
-  orders.forEach((order) => {
-    const orderDate = new Date(order.createdAt);
-    orderDate.setHours(0, 0, 0, 0);
-
-    const day = result.find(
-      (item) => item.date.getTime() === orderDate.getTime()
-    );
-
-    if (!day) return;
-
-    const orderTotal = order.items.reduce((sum, item) => {
-      return sum + item.quantity * Number(item.product.price);
-    }, 0);
-
-    day.revenue += orderTotal;
-  });
-
-  return result.map((item) => ({
-    label: item.label,
-    revenue: Number(item.revenue.toFixed(2)),
-  }));
-}
 async function getDashboard() {
   const [
     totalProducts,
@@ -149,15 +110,15 @@ async function getDashboard() {
       },
     }),
     prisma.order.findMany({
-  include: {
-    customer: true,
-    items: {
       include: {
-        product: true,
+        customer: true,
+        items: {
+          include: {
+            product: true,
+          },
+        },
       },
-    },
-  },
-}),
+    }),
     prisma.activity.findMany({
       orderBy: {
         createdAt: "desc",
@@ -171,23 +132,21 @@ async function getDashboard() {
   const bestSeller = calculateBestSeller(orders);
   const topCustomer = calculateTopCustomer(orders);
   const topProducts = calculateTopProducts(orders);
-  const revenueByDay = calculateRevenueByDay(orders);
 
-return {
-  totalProducts,
-  totalCustomers,
-  totalOrders,
-  preparingOrders,
-  onTheWayOrders,
-  deliveredOrders,
-  totalRevenue,
-  averageTicket,
-  bestSeller,
-  topCustomer,
-  topProducts,
-  revenueByDay,
-  recentActivities,
-};
+  return {
+    totalProducts,
+    totalCustomers,
+    totalOrders,
+    preparingOrders,
+    onTheWayOrders,
+    deliveredOrders,
+    totalRevenue,
+    averageTicket,
+    bestSeller,
+    topCustomer,
+    topProducts,
+    recentActivities,
+  };
 }
 
 module.exports = {
