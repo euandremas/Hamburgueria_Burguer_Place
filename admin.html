@@ -1,5 +1,6 @@
 <!doctype html>
 <html lang="pt-BR" data-theme="light">
+
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
@@ -13,13 +14,7 @@
   <div id="toast" class="toast is-hidden" aria-live="polite"></div>
 
   <!-- ✅ NOVO: Botão do menu (☰ / ✕) -->
-  <button
-    id="menuToggle"
-    class="menu-toggle"
-    type="button"
-    aria-label="Abrir menu"
-    aria-expanded="false"
-  >☰</button>
+  <button id="menuToggle" class="menu-toggle" type="button" aria-label="Abrir menu" aria-expanded="false">☰</button>
 
   <!-- ✅ NOVO: Overlay -->
   <div id="overlay" class="overlay" aria-hidden="true"></div>
@@ -29,8 +24,8 @@
     <aside class="sidebar">
       <div class="brand">
         <div class="brand__icon brand__icon--burger" aria-hidden="true">
-  🍔
-</div>
+          🍔
+        </div>
 
         <div class="brand__text">
           <div class="brand__name">Burger Place <span class="brand__accent">Admin</span></div>
@@ -107,7 +102,9 @@
             <!-- gear -->
             <svg viewBox="0 0 24 24" class="ico" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z"></path>
-              <path d="M19.4 15a7.7 7.7 0 0 0 .1-1l2-1.5-2-3.5-2.4.5a7.8 7.8 0 0 0-1.7-1L15 6l-4-.5-1 2.1a7.8 7.8 0 0 0-1.7 1L5.9 8.5 3.9 12l2 1.5a7.7 7.7 0 0 0 .1 1l-2 1.5 2 3.5 2.4-.5a7.8 7.8 0 0 0 1.7 1L9 22l4 .5 1-2.1a7.8 7.8 0 0 0 1.7-1l2.4.5 2-3.5-2-1.5Z"></path>
+              <path
+                d="M19.4 15a7.7 7.7 0 0 0 .1-1l2-1.5-2-3.5-2.4.5a7.8 7.8 0 0 0-1.7-1L15 6l-4-.5-1 2.1a7.8 7.8 0 0 0-1.7 1L5.9 8.5 3.9 12l2 1.5a7.7 7.7 0 0 0 .1 1l-2 1.5 2 3.5 2.4-.5a7.8 7.8 0 0 0 1.7 1L9 22l4 .5 1-2.1a7.8 7.8 0 0 0 1.7-1l2.4.5 2-3.5-2-1.5Z">
+              </path>
             </svg>
           </span>
           <span>Configurações</span>
@@ -137,7 +134,7 @@
           <h1>Painel</h1>
           <p>Visão geral do sistema</p>
         </header>
-        
+
         <div class="cards">
           <div class="kpi">
             <div class="kpi__top">
@@ -191,112 +188,99 @@
             </div>
             <div class="kpi__val" id="kpiProdutos">0</div>
           </div>
-        
-        <div class="kpi">
-  <div class="kpi__top">
-    <span>Pedidos a Caminho</span>
-    <span class="kpi__ico kpi__ico--orange" aria-hidden="true">🚚</span>
-  </div>
 
-  <div class="kpi__val" id="kpiOnTheWay">0</div>
-</div>
+          <div class="kpi">
+            <div class="kpi__top">
+              <span>Pedidos a Caminho</span>
+              <span class="kpi__ico kpi__ico--orange" aria-hidden="true">🚚</span>
+            </div>
 
-<div class="kpi">
-  <div class="kpi__top">
-    <span>Clientes Cadastrados</span>
-    <span class="kpi__ico kpi__ico--blue" aria-hidden="true">👥</span>
-  </div>
+            <div class="kpi__val" id="kpiOnTheWay">0</div>
+          </div>
 
-  <div class="kpi__val" id="kpiCustomers">0</div>
-</div>
+          <div class="kpi">
+            <div class="kpi__top">
+              <span>Clientes Cadastrados</span>
+              <span class="kpi__ico kpi__ico--blue" aria-hidden="true">👥</span>
+            </div>
 
-<div class="kpi">
-  <div class="kpi__top">
-    <span>Receita Total</span>
-    <span class="kpi__ico kpi__ico--green" aria-hidden="true">💰</span>
-  </div>
+            <div class="kpi__val" id="kpiCustomers">0</div>
+          </div>
 
-  <div class="kpi__val" id="kpiRevenue">R$ 0,00</div>
-</div>
+          <div class="kpi">
+            <div class="kpi__top">
+              <span>Receita Total</span>
+              <span class="kpi__ico kpi__ico--green" aria-hidden="true">💰</span>
+            </div>
 
-<div class="kpi">
-  <div class="kpi__top">
-    <span>Ticket Médio</span>
-    <span class="kpi__ico kpi__ico--violet" aria-hidden="true">📊</span>
-  </div>
+            <div class="kpi__val" id="kpiRevenue">R$ 0,00</div>
+          </div>
 
-  <div class="kpi__val" id="kpiAverageTicket">R$ 0,00</div>
-</div>
-<div class="kpi">
-  <div class="kpi__top">
-    <span>Produto campeão</span>
-    <span class="kpi__ico">🍔</span>
-  </div>
+          <div class="kpi">
+            <div class="kpi__top">
+              <span>Ticket Médio</span>
+              <span class="kpi__ico kpi__ico--violet" aria-hidden="true">📊</span>
+            </div>
 
-  <div class="kpi__val" id="kpiBestSeller">
-    —
-  </div>
+            <div class="kpi__val" id="kpiAverageTicket">R$ 0,00</div>
+          </div>
+          <div class="kpi">
+            <div class="kpi__top">
+              <span>Produto campeão</span>
+              <span class="kpi__ico">🍔</span>
+            </div>
 
-  <div class="kpi__sub" id="kpiBestSellerQty">
-    0 vendidos
-  </div>
-</div>
+            <div class="kpi__val" id="kpiBestSeller">
+              —
+            </div>
 
-<div class="kpi">
-  <div class="kpi__top">
-    <span>Cliente destaque</span>
-    <span class="kpi__ico">👑</span>
-  </div>
+            <div class="kpi__sub" id="kpiBestSellerQty">
+              0 vendidos
+            </div>
+          </div>
 
-  <div class="kpi__val" id="kpiTopCustomer">
-    —
-  </div>
+          <div class="kpi">
+            <div class="kpi__top">
+              <span>Cliente destaque</span>
+              <span class="kpi__ico">👑</span>
+            </div>
 
-  <div class="kpi__sub" id="kpiTopCustomerOrders">
-    0 pedidos
-  </div>
-</div>
+            <div class="kpi__val" id="kpiTopCustomer">
+              —
+            </div>
 
-</div>
+            <div class="kpi__sub" id="kpiTopCustomerOrders">
+              0 pedidos
+            </div>
+          </div>
 
-<section class="panel dashboardChartPanel">
-  <div class="dashboardChartHead">
-    <div>
-      <h2>Pedidos por Status</h2>
-      <p class="muted">Distribuição atual dos pedidos</p>
-    </div>
-  </div>
+        </div>
 
-  <div class="dashboardChartBox">
-    <canvas id="ordersStatusChart"></canvas>
-  </div>
-</section>
+        <section class="panel dashboardChartPanel">
+          <div class="dashboardChartHead">
+            <div>
+              <h2>Pedidos por Status</h2>
+              <p class="muted">Distribuição atual dos pedidos</p>
+            </div>
+          </div>
 
-<section class="panel dashboardChartPanel">
-  <div class="dashboardChartHead">
-    <div>
-      <h2>Produtos Mais Vendidos</h2>
-      <p class="muted">Quantidade total vendida por produto</p>
-    </div>
-  </div>
+          <div class="dashboardChartBox">
+            <canvas id="ordersStatusChart"></canvas>
+          </div>
+        </section>
 
-  <div class="dashboardChartBox dashboardChartBox--bar">
-    <canvas id="topProductsChart"></canvas>
-  </div>
-</section>
+        <section class="panel dashboardChartPanel">
+          <div class="dashboardChartHead">
+            <div>
+              <h2>Produtos Mais Vendidos</h2>
+              <p class="muted">Quantidade total vendida por produto</p>
+            </div>
+          </div>
 
-<section class="panel dashboardChartPanel">
-  <div class="dashboardChartHead">
-    <div>
-      <h2>Receita dos Últimos 7 Dias</h2>
-      <p class="muted">Evolução diária do faturamento</p>
-    </div>
-  </div>
-
-  <div class="dashboardChartBox dashboardChartBox--line">
-    <canvas id="revenueChart"></canvas>
-  </div>
-</section>
+          <div class="dashboardChartBox dashboardChartBox--bar">
+            <canvas id="topProductsChart"></canvas>
+          </div>
+        </section>
 
         <section class="panel">
           <h2>Atividade Recente</h2>
@@ -334,12 +318,12 @@
 
               <label class="field">
                 <span>Preço (R$)</span>
-                <input id="pPreco" type="number" step="0.01" min="0" placeholder="0,00"  />
+                <input id="pPreco" type="number" step="0.01" min="0" placeholder="0,00" />
               </label>
 
               <label class="field">
                 <span>Descrição</span>
-                <textarea id="pDesc" rows="4" placeholder="Ingredientes e detalhes..." ></textarea>
+                <textarea id="pDesc" rows="4" placeholder="Ingredientes e detalhes..."></textarea>
               </label>
 
               <div class="field">
@@ -355,15 +339,15 @@
                 </div>
               </div>
 
-             <div class="formActions">
-              <button class="btnPrimary" type="submit">
-                <span class="btnIcon">+</span> Produto
+              <div class="formActions">
+                <button class="btnPrimary" type="submit">
+                  <span class="btnIcon">+</span> Produto
                 </button>
 
                 <button id="btnCancelProductEdit" class="btnGhost is-hidden" type="button">
                   Cancelar edição
                 </button>
-</div>
+              </div>
             </form>
           </section>
 
@@ -484,183 +468,175 @@
         </div>
       </section>
 
-     <!-- USUÁRIOS -->
-<section class="view" id="view-usuarios">
-  <header class="pageHead">
-    <h1>Usuários</h1>
-    <p>Gerenciar os usuários do sistema</p>
-  </header>
+      <!-- USUÁRIOS -->
+      <section class="view" id="view-usuarios">
+        <header class="pageHead">
+          <h1>Usuários</h1>
+          <p>Gerenciar os usuários do sistema</p>
+        </header>
 
-  <div class="grid2">
-    <section class="panel">
-      <h2><span class="plus">+</span> Novo usuário</h2>
+        <div class="grid2">
+          <section class="panel">
+            <h2><span class="plus">+</span> Novo usuário</h2>
 
-      <form id="formUsuario" class="form">
-        <label class="field">
-          <span>Nome Completo</span>
-          <input id="uNome" type="text" placeholder="Ex: João Silva" required />
-        </label>
+            <form id="formUsuario" class="form">
+              <label class="field">
+                <span>Nome Completo</span>
+                <input id="uNome" type="text" placeholder="Ex: João Silva" required />
+              </label>
 
-        <label class="field">
-          <span>Usuário</span>
-          <div class="inline">
-            <input id="uUser" type="text" placeholder="joao.silva" required />
-            <button id="btnCheckUser" class="btnGhost" type="button">
-              Verificar
-            </button>
-          </div>
-          <small id="userHint" class="hint">Sugestão automática baseada no nome. Você pode editar.</small>
-        </label>
+              <label class="field">
+                <span>Usuário</span>
+                <div class="inline">
+                  <input id="uUser" type="text" placeholder="joao.silva" required />
+                  <button id="btnCheckUser" class="btnGhost" type="button">
+                    Verificar
+                  </button>
+                </div>
+                <small id="userHint" class="hint">Sugestão automática baseada no nome. Você pode editar.</small>
+              </label>
 
-        <label class="field">
-          <span>Senha</span>
-          <div class="passwordActions">
-            <div class="passwordField">
-              <input id="uSenha" type="password" minlength="6" placeholder="Mínimo 6 caracteres" required />
+              <label class="field">
+                <span>Senha</span>
+                <div class="passwordActions">
+                  <div class="passwordField">
+                    <input id="uSenha" type="password" minlength="6" placeholder="Mínimo 6 caracteres" required />
 
-              <button type="button" class="togglePassword" data-target="uSenha" title="Mostrar senha" aria-label="Mostrar senha">
-                <svg class="eyeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"></path>
-                  <circle cx="12" cy="12" r="3"></circle>
-                </svg>
+                    <button type="button" class="togglePassword" data-target="uSenha" title="Mostrar senha"
+                      aria-label="Mostrar senha">
+                      <svg class="eyeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                      </svg>
+                    </button>
+                  </div>
+
+                  <div class="passwordStrength">
+                    <div class="passwordStrength__bar">
+                      <span id="passwordStrengthBar"></span>
+                    </div>
+
+                    <small id="passwordStrengthText" class="hint">Força da senha: fraca</small>
+
+                    <ul class="passwordRules">
+                      <li id="ruleLength">Mínimo 8 caracteres</li>
+                      <li id="ruleUpper">Letra maiúscula</li>
+                      <li id="ruleLower">Letra minúscula</li>
+                      <li id="ruleNumber">Número</li>
+                      <li id="ruleSpecial">Caractere especial</li>
+                    </ul>
+                  </div>
+                  <small id="capsLockWarning" class="hint" style="display:none; color:#ef4444;">
+                    Caps Lock está ativado.
+                  </small>
+
+                  <button id="btnGeneratePassword" type="button" class="btnGhost">
+                    Gerar
+                  </button>
+
+                  <button id="btnCopyPassword" type="button" class="btnGhost">
+                    Copiar
+                  </button>
+                </div>
+              </label>
+
+              <button class="btnPrimary" type="submit">
+                <span class="btnIco">+</span> Usuário
               </button>
+            </form>
+          </section>
+
+          <section class="panel">
+            <h2>Usuários Cadastrados (<span id="userCount">0</span>)</h2>
+
+            <div class="tableWrap">
+              <table class="table" id="tableUsuarios">
+                <thead>
+                  <tr>
+                    <th>Nome</th>
+                    <th>Usuário</th>
+                    <th class="right">Ações</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
             </div>
-
-            <div class="passwordStrength">
-  <div class="passwordStrength__bar">
-    <span id="passwordStrengthBar"></span>
-  </div>
-
-  <small id="passwordStrengthText" class="hint">Força da senha: fraca</small>
-
-  <ul class="passwordRules">
-    <li id="ruleLength">Mínimo 8 caracteres</li>
-    <li id="ruleUpper">Letra maiúscula</li>
-    <li id="ruleLower">Letra minúscula</li>
-    <li id="ruleNumber">Número</li>
-    <li id="ruleSpecial">Caractere especial</li>
-  </ul>
-</div>
-  <small id="capsLockWarning" class="hint" style="display:none; color:#ef4444;">
-  Caps Lock está ativado.
-</small>
-
-            <button id="btnGeneratePassword" type="button" class="btnGhost">
-              Gerar
-            </button>
-
-            <button id="btnCopyPassword" type="button" class="btnGhost">
-              Copiar
-            </button>
-          </div>
-        </label>
-
-        <button class="btnPrimary" type="submit">
-          <span class="btnIco">+</span> Usuário
-        </button>
-      </form>
-    </section>
-
-    <section class="panel">
-      <h2>Usuários Cadastrados (<span id="userCount">0</span>)</h2>
-
-      <div class="tableWrap">
-        <table class="table" id="tableUsuarios">
-          <thead>
-            <tr>
-              <th>Nome</th>
-              <th>Usuário</th>
-              <th class="right">Ações</th>
-            </tr>
-          </thead>
-          <tbody></tbody>
-        </table>
-      </div>
-    </section>
-  </div>
-</section>
+          </section>
+        </div>
+      </section>
 
       <!-- PEDIDOS -->
-<section class="view" id="view-pedidos">
-  <header class="pageHead">
-    <h1>Pedidos</h1>
-    <p>Gerenciar os pedidos da hamburgueria</p>
-  </header>
+      <section class="view" id="view-pedidos">
+        <header class="pageHead">
+          <h1>Pedidos</h1>
+          <p>Gerenciar os pedidos da hamburgueria</p>
+        </header>
 
-  <div class="grid2">
-    <section class="panel">
-      <h2><span class="plus">+</span> Novo Pedido</h2>
+        <div class="grid2">
+          <section class="panel">
+            <h2><span class="plus">+</span> Novo Pedido</h2>
 
-      <form id="formPedido" class="form">
-        <label class="field">
-          <span>Cliente</span>
-          <select id="oCliente" required></select>
-        </label>
+            <form id="formPedido" class="form">
+              <label class="field">
+                <span>Cliente</span>
+                <select id="oCliente" required></select>
+              </label>
 
-        <label class="field">
-          <span>Produto</span>
+              <label class="field">
+                <span>Produto</span>
 
-          <div class="inline">
-            <select id="oProduto"></select>
+                <div class="inline">
+                  <select id="oProduto"></select>
 
-            <button
-              id="btnAddItem"
-              class="btnSquare"
-              type="button"
-              aria-label="Adicionar produto ao pedido"
-            >
-              +
-            </button>
-          </div>
-        </label>
+                  <button id="btnAddItem" class="btnSquare" type="button" aria-label="Adicionar produto ao pedido">
+                    +
+                  </button>
+                </div>
+              </label>
 
-        <div class="field">
-          <span>Itens do pedido</span>
-          <div class="chips" id="orderItems"></div>
+              <div class="field">
+                <span>Itens do pedido</span>
+                <div class="chips" id="orderItems"></div>
+              </div>
+
+              <label class="field">
+                <span>ETA (minutos)</span>
+                <input id="oEta" type="number" min="1" max="240" value="20" required />
+              </label>
+
+              <button class="btnPrimary btnPrimary--soft" type="submit">
+                <span class="btnIco">+</span> Criar Pedido
+              </button>
+            </form>
+          </section>
+
+          <section class="panel">
+            <h2>Lista de Pedidos (<span id="orderCount">0</span>)</h2>
+
+            <div class="orderToolbar">
+              <input id="orderSearch" type="search" placeholder="Buscar por nº do pedido, cliente ou produto"
+                autocomplete="off" />
+
+              <select id="orderSort">
+                <option value="newest">Mais recentes</option>
+                <option value="oldest">Mais antigos</option>
+                <option value="highest">Maior valor</option>
+                <option value="lowest">Menor valor</option>
+                <option value="status">Status</option>
+              </select>
+
+              <div class="orderFilters" aria-label="Filtrar pedidos por status">
+                <button class="orderFilterBtn is-active" type="button" data-order-filter="all">Todos</button>
+                <button class="orderFilterBtn" type="button" data-order-filter="Em preparação">Em preparação</button>
+                <button class="orderFilterBtn" type="button" data-order-filter="A caminho">A caminho</button>
+                <button class="orderFilterBtn" type="button" data-order-filter="Entregue">Entregues</button>
+              </div>
+            </div>
+
+            <div class="orders" id="ordersList"></div>
+          </section>
         </div>
-
-        <label class="field">
-          <span>ETA (minutos)</span>
-          <input id="oEta" type="number" min="1" max="240" value="20" required />
-        </label>
-
-        <button class="btnPrimary btnPrimary--soft" type="submit">
-          <span class="btnIco">+</span> Criar Pedido
-        </button>
-      </form>
-    </section>
-
-    <section class="panel">
-      <h2>Lista de Pedidos (<span id="orderCount">0</span>)</h2>
-
-      <div class="orderToolbar">
-        <input
-          id="orderSearch"
-          type="search"
-          placeholder="Buscar por nº do pedido, cliente ou produto"
-          autocomplete="off"
-        />
-
-        <select id="orderSort">
-          <option value="newest">Mais recentes</option>
-          <option value="oldest">Mais antigos</option>
-          <option value="highest">Maior valor</option>
-          <option value="lowest">Menor valor</option>
-          <option value="status">Status</option>
-        </select>
-
-        <div class="orderFilters" aria-label="Filtrar pedidos por status">
-          <button class="orderFilterBtn is-active" type="button" data-order-filter="all">Todos</button>
-          <button class="orderFilterBtn" type="button" data-order-filter="Em preparação">Em preparação</button>
-          <button class="orderFilterBtn" type="button" data-order-filter="A caminho">A caminho</button>
-          <button class="orderFilterBtn" type="button" data-order-filter="Entregue">Entregues</button>
-        </div>
-      </div>
-
-      <div class="orders" id="ordersList"></div>
-    </section>
-  </div>
-</section>
+      </section>
 
       <!-- CONFIG -->
       <section class="view" id="view-config">
@@ -686,58 +662,53 @@
     </main>
   </div>
 
- <div id="globalLoading" class="globalLoading is-hidden" aria-live="polite">
-  <div class="burgerLoader">
-    <div class="steam steam1"></div>
-    <div class="steam steam2"></div>
-    <div class="steam steam3"></div>
-    <div class="burgerIcon">🍔</div>
-    <p id="globalLoadingText">Preparando...</p>
-  </div>
-</div>
-
-<script src="./js/ui.js?v=3"></script>
-<script src="./js/api.js"></script>
-<script src="./js/auth.js"></script>
-<script src="./js/store.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
-<script src="./js/admin.js?v=9"></script>
-
-<script>
-  Auth.requireAuth();
-  Admin.init();
-</script>
-
-<!-- <script src="./js/pwa.js"></script> -->
-
-<!-- Modal de confirmação -->
-
-<div id="confirmModal" class="modalOverlay is-hidden">
-  <div class="confirmModal">
-    <h3 id="confirmTitle">Confirmação</h3>
-
-    <p id="confirmMessage">
-      Deseja continuar?
-    </p>
-
-    <div class="confirmActions">
-      <button
-        id="confirmCancel"
-        class="btnSecondary"
-        type="button">
-        Cancelar
-      </button>
-
-      <button
-        id="confirmOk"
-        class="btnDanger"
-        type="button">
-        Confirmar
-      </button>
+  <div id="globalLoading" class="globalLoading is-hidden" aria-live="polite">
+    <div class="burgerLoader">
+      <div class="steam steam1"></div>
+      <div class="steam steam2"></div>
+      <div class="steam steam3"></div>
+      <div class="burgerIcon">🍔</div>
+      <p id="globalLoadingText">Preparando...</p>
     </div>
   </div>
-</div>
+
+  <script src="./js/ui.js?v=3"></script>
+  <script src="./js/api.js"></script>
+  <script src="./js/auth.js"></script>
+  <script src="./js/store.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+  <script src="./js/admin.js?v=9"></script>
+
+  <script>
+    Auth.requireAuth();
+    Admin.init();
+  </script>
+
+  <!-- <script src="./js/pwa.js"></script> -->
+
+  <!-- Modal de confirmação -->
+
+  <div id="confirmModal" class="modalOverlay is-hidden">
+    <div class="confirmModal">
+      <h3 id="confirmTitle">Confirmação</h3>
+
+      <p id="confirmMessage">
+        Deseja continuar?
+      </p>
+
+      <div class="confirmActions">
+        <button id="confirmCancel" class="btnSecondary" type="button">
+          Cancelar
+        </button>
+
+        <button id="confirmOk" class="btnDanger" type="button">
+          Confirmar
+        </button>
+      </div>
+    </div>
+  </div>
 
 </body>
+
 </html>
