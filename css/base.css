@@ -39,6 +39,12 @@ body {
   gap: 10px;
 }
 
+.field {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
 .field span {
   font-size: 14px;
 }
@@ -101,29 +107,36 @@ body {
 
 .passwordField {
   position: relative;
+  width: 100%;
 }
 
 .passwordField input {
+  display: block;
   width: 100%;
-  padding-right: 48px;
+  padding-right: 44px;
 }
 
 .togglePassword {
   position: absolute;
   top: 50%;
   right: 12px;
+  transform: translateY(-50%);
+
   display: flex;
+  align-items: center;
+  justify-content: center;
+
   width: 28px;
   height: 28px;
   padding: 0;
-  align-items: center;
-  justify-content: center;
+  margin: 0;
+
   border: none;
+  outline: none;
   background: transparent;
-  color: #7b8794;
+
+  box-sizing: border-box;
   cursor: pointer;
-  transform: translateY(-50%);
-  transition: color 0.2s ease, opacity 0.2s ease;
 }
 
 .togglePassword:hover {
@@ -292,4 +305,11 @@ body {
   100% {
     transform: translateX(0);
   }
+}
+.field input {
+    height: 40px;
+}
+
+.passwordField input {
+    height: 40px;
 }
