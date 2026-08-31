@@ -1,9 +1,24 @@
 module.exports = {
     testEnvironment: "node",
+
     collectCoverageFrom: [
         "src/**/*.js",
         "!src/server.js"
     ],
+
     coverageDirectory: "coverage",
-    coverageReporters: ["text", "html"]
+
+    coverageReporters: [
+        "text",
+        "html"
+    ],
+
+    coverageThreshold: {
+        global: {
+            statements: 80,
+            functions: 80,
+            lines: 80,
+            branches: 60
+        }
+    }
 };

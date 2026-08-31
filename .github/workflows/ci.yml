@@ -1,0 +1,110 @@
+name: CI - Testes e Qualidade
+
+on:
+  push:
+    branches:
+      - atividade-3
+  pull_request:
+    branches:
+      - atividade-3
+  workflow_dispatch:
+
+jobs:
+  test-and-build:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: burger_place
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/burger_place?schema=public
+      JWT_SECRET: github-actions-test-secret
+      JWT_EXPIRES_IN: 1d
+      NODE_ENV: test
+      FRONTEND_ORIGIN: http://127.0.0.1:8080
+
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v4
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: |
+            package-lock.json
+            backend/package-lock.json
+
+      - name: Instalar dependências do front-end
+        run: npm ci
+
+      - name: Instalar dependências do back-end
+        working-directory: backend
+        run: npm ci
+
+      - name: Gerar Prisma Client
+        working-directory: backend
+        run: npx prisma generate
+
+      - name: Aplicar migrations no PostgreSQL
+        working-directory: backend
+        run: npx prisma migrate deploy
+
+      - name: Executar testes e verificar cobertura
+        working-directory: backend
+        run: npm run test:coverage
+
+      - name: Publicar relatório de cobertura
+        uses: actions/upload-artifact@v4
+        with:
+          name: relatorio-cobertura-backend
+          path: backend/coverage/
+          if-no-files-found: error
+
+      - name: Build do front-end
+        run: |
+          rm -rf dist
+          mkdir -p dist
+          cp index.html admin.html manifest.webmanifest sw.js dist/
+          cp -r css js img dist/
+
+      - name: Publicar build do front-end
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-frontend
+          path: dist/
+          if-no-files-found: error
+
+      - name: Iniciar front-end para os testes Cypress
+        run: |
+          npm run serve > /tmp/frontend.log 2>&1 &
+
+      - name: Aguardar front-end
+        run: |
+          for i in {1..30}; do
+            if curl -fsS http://127.0.0.1:8080/index.html > /dev/null; then
+              echo "Front-end disponível."
+              exit 0
+            fi
+            sleep 1
+          done
+
+          echo "Front-end não iniciou."
+          cat /tmp/frontend.log
+          exit 1
+
+      - name: Executar testes Cypress
+        run: npm test
