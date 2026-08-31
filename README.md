@@ -1,21 +1,21 @@
 # 🍔 Burger Place
 
-**Atividade 2 | Projeto acadêmico desenvolvido para a disciplina Projetos e Práticas de Extensão III**
+**Atividade 3 | Projeto acadêmico desenvolvido para a disciplina Projetos e Práticas de Extensão III**
 
 Sistema Full Stack para gerenciamento de hamburguerias.
 
-O Burger Place nasceu como uma aplicação front-end durante a PPE II e evoluiu para uma arquitetura cliente-servidor baseada em **Node.js, Express, PostgreSQL e Prisma ORM**, com autenticação JWT, gerenciamento administrativo, persistência em banco de dados e dashboard alimentado pela API REST.
+O Burger Place nasceu como uma aplicação front-end e evoluiu para uma arquitetura cliente-servidor baseada em **Node.js, Express, PostgreSQL e Prisma ORM**, com autenticação JWT, gerenciamento administrativo, persistência em banco de dados, dashboard alimentado por API REST, testes automatizados e pipeline de Integração Contínua.
 
-O objetivo desta etapa foi aplicar, de forma prática, conceitos de desenvolvimento web, arquitetura em camadas, banco de dados, autenticação, integração entre Front-end e Back-end, validação de dados e tratamento padronizado de erros.
+Nesta etapa, o foco foi aplicar práticas de **arquitetura de software e qualidade**, incluindo testes unitários, testes de integração, mocks, fixtures, medição de cobertura, testes de comportamento do Front-end e automação com GitHub Actions.
 
 ## 🚀 Status do Projeto
 
-✅ **Atividade 2 concluída**
+✅ **Atividade 3 concluída**
 
 Branch utilizada nesta etapa:
 
 ```text
-atividade-2
+atividade-3
 ```
 
 Principais recursos implementados:
@@ -40,6 +40,16 @@ Principais recursos implementados:
 - ✅ Interface responsiva
 - ✅ Tema claro/escuro
 - ✅ Skeleton Loading
+- ✅ Testes unitários com Jest
+- ✅ Testes de integração com Supertest
+- ✅ Integração de testes com PostgreSQL
+- ✅ Mocks e fixtures
+- ✅ Cobertura automatizada de código
+- ✅ Testes de comportamento com Cypress
+- ✅ API mockada nos testes de Front-end
+- ✅ Pipeline de Integração Contínua com GitHub Actions
+- ✅ Build automatizado do Front-end
+- ✅ Relatório de cobertura publicado como artefato
 
 ## 📚 Sumário
 
@@ -53,6 +63,10 @@ Principais recursos implementados:
 - [Configuração do Ambiente](#️-configuração-do-ambiente)
 - [Banco de Dados](#-banco-de-dados)
 - [Executando o Projeto](#️-executando-o-projeto)
+- [Testes Automatizados](#-testes-automatizados)
+- [Cobertura de Código](#-cobertura-de-código)
+- [Testes do Front-end](#-testes-do-front-end)
+- [Integração Contínua](#-integração-contínua)
 - [API REST](#-api-rest)
 - [Exemplos de Requisição e Resposta](#-exemplos-de-requisição-e-resposta)
 - [Dashboard](#-dashboard)
@@ -75,6 +89,8 @@ O sistema permite gerenciar:
 
 Toda a aplicação utiliza arquitetura cliente-servidor, separando as responsabilidades entre Front-end, API, regras de negócio e persistência de dados.
 
+Na Atividade 3, essa arquitetura passou a ser validada por testes automatizados e por um pipeline de Integração Contínua.
+
 ## 🧰 Tecnologias Utilizadas
 
 ### 🎨 Front-end
@@ -84,6 +100,7 @@ Toda a aplicação utiliza arquitetura cliente-servidor, separando as responsabi
 - JavaScript ES6+
 - Chart.js
 - Design responsivo
+- Cypress
 
 ### ⚙️ Back-end
 
@@ -92,6 +109,8 @@ Toda a aplicação utiliza arquitetura cliente-servidor, separando as responsabi
 - Prisma ORM
 - JSON Web Token (JWT)
 - bcryptjs
+- Jest
+- Supertest
 
 ### 🗄 Banco de Dados
 
@@ -105,8 +124,8 @@ Toda a aplicação utiliza arquitetura cliente-servidor, separando as responsabi
 
 - Git
 - GitHub
+- GitHub Actions
 - Prisma Studio
-- Thunder Client
 - Visual Studio Code
 - npm
 
@@ -141,6 +160,7 @@ Essa organização facilita:
 - manutenção do código;
 - reutilização de regras de negócio;
 - tratamento centralizado de erros;
+- testes automatizados;
 - evolução da aplicação.
 
 ## ✨ Funcionalidades
@@ -215,10 +235,16 @@ O painel administrativo apresenta dados obtidos por meio da API.
 ```text
 Hamburgueria_Burguer_Place/
 │
+├── .github/
+│   └── workflows/
+│       └── ci.yml
+│
 ├── backend/
 │   ├── prisma/
 │   │   ├── migrations/
-│   │   └── schema.prisma
+│   │   ├── schema.prisma
+│   │   └── seed.js
+│   │
 │   ├── src/
 │   │   ├── config/
 │   │   ├── controllers/
@@ -228,8 +254,19 @@ Hamburgueria_Burguer_Place/
 │   │   ├── utils/
 │   │   ├── app.js
 │   │   └── server.js
+│   │
+│   ├── tests/
+│   │   ├── fixtures/
+│   │   ├── integration/
+│   │   └── unit/
+│   │
 │   ├── .env.example
+│   ├── jest.config.js
 │   └── package.json
+│
+├── cypress/
+│   └── e2e/
+│       └── hamburgueria.cy.js
 │
 ├── css/
 ├── js/
@@ -239,6 +276,7 @@ Hamburgueria_Burguer_Place/
 │
 ├── admin.html
 ├── index.html
+├── cypress.config.js
 ├── package.json
 └── README.md
 ```
@@ -373,6 +411,147 @@ Aplicação disponível em:
 ```text
 http://localhost:8080
 ```
+
+## 🧪 Testes Automatizados
+
+A Atividade 3 adiciona uma suíte automatizada de testes para validar a qualidade, estabilidade e integração do sistema.
+
+### Back-end
+
+Os testes do Back-end utilizam **Jest** e **Supertest**.
+
+Foram implementados:
+
+- testes unitários de regras de negócio;
+- mocks de dependências externas;
+- fixtures para preparação de dados;
+- testes de integração com a API;
+- testes de integração com PostgreSQL;
+- testes de autenticação e JWT;
+- testes dos fluxos de produtos, clientes, pedidos e dashboard.
+
+Para executar os testes:
+
+```bash
+cd backend
+npm test
+```
+
+Resultado validado:
+
+```text
+Test Suites: 7 passed, 7 total
+Tests:       19 passed, 19 total
+```
+
+## 📈 Cobertura de Código
+
+Para executar os testes com medição de cobertura:
+
+```bash
+cd backend
+npm run test:coverage
+```
+
+Resultado obtido no pipeline de Integração Contínua:
+
+| Métrica | Cobertura |
+|---|---:|
+| Statements | 87.63% |
+| Branches | 61.85% |
+| Functions | 87.95% |
+| Lines | 88.68% |
+
+O Jest utiliza limites mínimos automáticos de cobertura. O pipeline é interrompido caso os limites definidos no projeto não sejam atingidos.
+
+O relatório HTML é gerado em:
+
+```text
+backend/coverage/
+```
+
+Para visualizá-lo localmente, abra:
+
+```text
+backend/coverage/index.html
+```
+
+A pasta `coverage` não é versionada no Git, pois o relatório pode ser regenerado automaticamente pelos testes.
+
+## 🖥 Testes do Front-end
+
+Os testes de comportamento do Front-end utilizam **Cypress**.
+
+São validados:
+
+- renderização da tela de login;
+- digitação nos campos;
+- interação de clique;
+- exibição e ocultação da senha;
+- autenticação com API mockada.
+
+Para executar os testes, primeiro inicie o Front-end:
+
+```bash
+npm run serve
+```
+
+Em outro terminal, execute:
+
+```bash
+npm test
+```
+
+Resultado validado:
+
+```text
+Tests:   4
+Passing: 4
+Failing: 0
+```
+
+## 🔄 Integração Contínua
+
+O projeto utiliza **GitHub Actions** por meio do arquivo:
+
+```text
+.github/workflows/ci.yml
+```
+
+O pipeline é executado automaticamente a cada `push` ou `pull request` na branch:
+
+```text
+atividade-3
+```
+
+O fluxo automatizado executa:
+
+1. checkout do código;
+2. configuração do Node.js;
+3. inicialização de PostgreSQL em ambiente isolado;
+4. instalação das dependências do Front-end;
+5. instalação das dependências do Back-end;
+6. geração do Prisma Client;
+7. aplicação das migrations;
+8. preparação dos dados de teste;
+9. execução dos testes do Back-end;
+10. verificação automática da cobertura;
+11. publicação do relatório de cobertura;
+12. build do Front-end;
+13. publicação do build como artefato;
+14. inicialização do Front-end;
+15. execução dos testes Cypress.
+
+Ao final do pipeline são disponibilizados os artefatos:
+
+```text
+relatorio-cobertura-backend
+build-frontend
+```
+
+A execução validada da Atividade 3 foi concluída com sucesso no GitHub Actions.
+
+> O deploy automático para ambiente de staging é opcional nesta atividade e não foi configurado nesta versão. O pipeline realiza testes, validação de cobertura e build automatizado.
 
 ## 🔗 API REST
 
@@ -602,6 +781,12 @@ Além dos requisitos centrais da atividade, o projeto possui:
 - Consulta automática de CEP
 - Organização modular do código
 - Separação entre Front-end e Back-end
+- Testes automatizados no Back-end
+- Testes de comportamento no Front-end
+- Integração real com PostgreSQL durante os testes
+- Cobertura automatizada
+- Pipeline de Integração Contínua
+- Build automatizado
 
 ## 🚀 Evolução Futura
 
@@ -631,6 +816,7 @@ Possíveis evoluções do projeto:
 - Hospedagem em nuvem
 - Banco PostgreSQL remoto
 - API publicada
+- Deploy automático para ambiente de staging
 
 ## 👨‍🎓 Projeto Acadêmico
 
@@ -638,12 +824,20 @@ Este projeto foi desenvolvido como atividade da disciplina **Projetos e Prática
 
 - Desenvolvimento Web
 - Engenharia de Software
+- Arquitetura de Software
 - APIs REST
 - Banco de Dados
 - Arquitetura cliente-servidor
 - Autenticação e autorização
 - Validação de dados
 - Tratamento de erros
+- Testes unitários
+- Testes de integração
+- Mocks e fixtures
+- Cobertura de código
+- Testes de comportamento
+- Integração Contínua
+- Automação com GitHub Actions
 - Responsividade
 - Boas práticas de desenvolvimento
 
