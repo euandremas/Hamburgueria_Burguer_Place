@@ -65,6 +65,12 @@ http://localhost:3333/api-docs
 
 ---
 
+## 🎥 Apresentação Final
+
+- [Vídeo da apresentação no YouTube](https://youtu.be/nA6vncLfH_w)
+- [Slides da apresentação em PDF](docs/Apresentacao_Final_Burger_Place.pdf)
+
+
 ## 📖 Sobre o Projeto
 
 O Burger Place foi desenvolvido para centralizar processos administrativos de uma hamburgueria.
