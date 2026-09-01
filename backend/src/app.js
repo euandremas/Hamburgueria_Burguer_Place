@@ -2,7 +2,9 @@ require("dotenv").config();
 
 const express = require("express");
 const cors = require("cors");
+const swaggerUi = require("swagger-ui-express");
 const routes = require("./routes");
+const openapi = require("./docs/openapi");
 const notFoundMiddleware = require("./middlewares/notFoundMiddleware");
 const errorMiddleware = require("./middlewares/errorMiddleware");
 
@@ -14,6 +16,8 @@ app.use(express.json({ limit: "2mb" }));
 app.get("/health", (req, res) => {
   res.status(200).json({ success: true, message: "Burger Place API online" });
 });
+
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(openapi));
 
 app.use(routes);
 app.use(notFoundMiddleware);
