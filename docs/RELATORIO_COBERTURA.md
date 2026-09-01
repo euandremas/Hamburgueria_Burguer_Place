@@ -1,12 +1,14 @@
 # Relatório de Cobertura de Testes
 
-## Atividade 3 - Projetos e Práticas de Extensão III
+## Atividade 4 - Projetos e Práticas de Extensão III
 
-Este relatório apresenta os resultados dos testes automatizados implementados no projeto **Burger Place** durante a Atividade 3.
+Este relatório consolida os resultados dos testes automatizados do projeto **Burger Place** para a entrega final da Atividade 4.
+
+A suíte de testes foi construída nas etapas anteriores do projeto e executada novamente após a inclusão da documentação Swagger/OpenAPI, com o objetivo de verificar se a evolução realizada na Atividade 4 não introduziu regressões no Back-end.
 
 ## Testes do Back-end
 
-Os testes do Back-end foram desenvolvidos utilizando **Jest** e **Supertest**.
+Os testes do Back-end utilizam **Jest** e **Supertest**.
 
 Foram implementados:
 
@@ -21,7 +23,7 @@ Foram implementados:
 - testes dos fluxos de pedidos;
 - testes do dashboard.
 
-Resultado da execução:
+Última execução validada na Atividade 4:
 
 ```text
 Test Suites: 7 passed, 7 total
@@ -30,18 +32,20 @@ Tests:       19 passed, 19 total
 
 ## Cobertura de Código
 
-A cobertura foi medida automaticamente pelo Jest.
+A cobertura foi medida automaticamente pelo Jest após a inclusão da documentação Swagger/OpenAPI.
 
-Resultado validado no GitHub Actions:
+Resultado da última execução validada na Atividade 4:
 
 | Métrica | Cobertura |
 |---|---:|
-| Statements | 87.63% |
-| Branches | 61.85% |
+| Statements | 87.76% |
+| Branches | 62.88% |
 | Functions | 87.95% |
-| Lines | 88.68% |
+| Lines | 88.81% |
 
-Os valores de Statements, Functions e Lines ultrapassaram a cobertura mínima recomendada de 80% definida para a atividade.
+Os valores de Statements, Functions e Lines permanecem acima de 80%.
+
+A métrica de Branches ficou em 62.88% e é apresentada separadamente para manter o relatório fiel ao resultado real da execução.
 
 O projeto também possui limites automáticos de cobertura configurados no Jest.
 
@@ -61,9 +65,9 @@ backend/coverage/index.html
 
 ## Testes do Front-end
 
-O Front-end foi validado utilizando **Cypress**.
+O Front-end utiliza **Cypress** para testes de comportamento.
 
-Os testes verificam:
+Os testes existentes verificam:
 
 - renderização da tela de login;
 - digitação nos campos;
@@ -71,7 +75,7 @@ Os testes verificam:
 - exibição e ocultação da senha;
 - autenticação com API mockada.
 
-Resultado:
+Na validação registrada na etapa anterior do projeto, o resultado foi:
 
 ```text
 Tests:   4
@@ -81,10 +85,12 @@ Failing: 0
 
 ## Integração Contínua
 
-O projeto utiliza **GitHub Actions** para executar automaticamente:
+O projeto utiliza **GitHub Actions** para automatizar verificações de qualidade.
+
+O pipeline contempla:
 
 1. instalação das dependências;
-2. inicialização de PostgreSQL;
+2. inicialização do PostgreSQL;
 3. aplicação das migrations;
 4. preparação dos dados de teste;
 5. execução dos testes do Back-end;
@@ -93,9 +99,9 @@ O projeto utiliza **GitHub Actions** para executar automaticamente:
 8. build do Front-end;
 9. execução dos testes Cypress.
 
-A execução do pipeline da branch `atividade-3` foi concluída com sucesso.
+A execução do pipeline da branch `atividade-3` foi concluída com sucesso durante a etapa anterior do projeto.
 
-O GitHub Actions também disponibiliza os seguintes artefatos:
+Os artefatos disponibilizados pelo pipeline incluem:
 
 ```text
 relatorio-cobertura-backend
@@ -104,4 +110,6 @@ build-frontend
 
 ## Resultado Final
 
-A suíte automatizada confirmou o funcionamento dos principais fluxos do sistema e permitiu validar a arquitetura da aplicação de forma automatizada, incluindo API, regras de negócio, autenticação, persistência em banco de dados e comportamento da interface.
+A última execução dos testes do Back-end na Atividade 4 confirmou que as alterações relacionadas à documentação Swagger/OpenAPI não introduziram regressões nos fluxos automatizados existentes.
+
+O conjunto de testes do projeto cobre autenticação, regras de negócio, API, persistência em PostgreSQL, produtos, clientes, pedidos, dashboard e comportamento do Front-end.

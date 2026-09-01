@@ -1,31 +1,32 @@
 # 🍔 Burger Place
 
-**Atividade 3 | Projeto acadêmico desenvolvido para a disciplina Projetos e Práticas de Extensão III**
+**Atividade 4 | Entrega Final — Projetos e Práticas de Extensão III**
 
-Sistema Full Stack para gerenciamento de hamburguerias.
+Sistema Full Stack para gerenciamento administrativo de hamburguerias.
 
-O Burger Place nasceu como uma aplicação front-end e evoluiu para uma arquitetura cliente-servidor baseada em **Node.js, Express, PostgreSQL e Prisma ORM**, com autenticação JWT, gerenciamento administrativo, persistência em banco de dados, dashboard alimentado por API REST, testes automatizados e pipeline de Integração Contínua.
+O Burger Place evoluiu de uma aplicação web simples para uma solução cliente-servidor com **Node.js, Express, PostgreSQL, Prisma ORM, autenticação JWT, documentação Swagger/OpenAPI, testes automatizados e Integração Contínua com GitHub Actions**.
 
-Nesta etapa, o foco foi aplicar práticas de **arquitetura de software e qualidade**, incluindo testes unitários, testes de integração, mocks, fixtures, medição de cobertura, testes de comportamento do Front-end e automação com GitHub Actions.
+Nesta entrega final, o foco está na consolidação técnica do projeto, documentação do sistema, documentação interativa da API e apresentação dos resultados alcançados.
+
+---
 
 ## 🚀 Status do Projeto
 
-✅ **Atividade 3 concluída**
+✅ **Atividade 4 concluída**
 
-Branch utilizada nesta etapa:
+Branch da entrega final:
 
 ```text
-atividade-3
+atividade-4
 ```
 
-Principais recursos implementados:
+Principais recursos:
 
 - ✅ Arquitetura Full Stack
 - ✅ API REST
 - ✅ PostgreSQL
 - ✅ Prisma ORM
-- ✅ Migrations
-- ✅ Seed de dados
+- ✅ Migrations e seed
 - ✅ Autenticação JWT
 - ✅ Hash de senhas com bcrypt
 - ✅ Rotas protegidas
@@ -33,247 +34,247 @@ Principais recursos implementados:
 - ✅ Dashboard administrativo
 - ✅ CRUD de produtos
 - ✅ CRUD de clientes
-- ✅ CRUD de pedidos
-- ✅ Indicadores de desempenho
-- ✅ Gráficos com Chart.js
+- ✅ Gerenciamento de pedidos
+- ✅ Gerenciamento de usuários
+- ✅ Alteração de status e ETA dos pedidos
 - ✅ Consulta automática de CEP
+- ✅ Indicadores e gráficos
 - ✅ Interface responsiva
 - ✅ Tema claro/escuro
-- ✅ Skeleton Loading
-- ✅ Testes unitários com Jest
-- ✅ Testes de integração com Supertest
-- ✅ Integração de testes com PostgreSQL
-- ✅ Mocks e fixtures
-- ✅ Cobertura automatizada de código
+- ✅ Testes unitários
+- ✅ Testes de integração
 - ✅ Testes de comportamento com Cypress
-- ✅ API mockada nos testes de Front-end
-- ✅ Pipeline de Integração Contínua com GitHub Actions
-- ✅ Build automatizado do Front-end
-- ✅ Relatório de cobertura publicado como artefato
+- ✅ Cobertura automatizada
+- ✅ Integração Contínua com GitHub Actions
+- ✅ Documentação Swagger/OpenAPI
+- ✅ Documentação técnica final
 
-## 📚 Sumário
+---
 
-- [Sobre o Projeto](#-sobre-o-projeto)
-- [Tecnologias Utilizadas](#-tecnologias-utilizadas)
-- [Arquitetura](#-arquitetura)
-- [Funcionalidades](#-funcionalidades)
-- [Estrutura do Projeto](#-estrutura-do-projeto)
-- [Pré-requisitos](#-pré-requisitos)
-- [Instalação](#-instalação)
-- [Configuração do Ambiente](#️-configuração-do-ambiente)
-- [Banco de Dados](#-banco-de-dados)
-- [Executando o Projeto](#️-executando-o-projeto)
-- [Testes Automatizados](#-testes-automatizados)
-- [Cobertura de Código](#-cobertura-de-código)
-- [Testes do Front-end](#-testes-do-front-end)
-- [Integração Contínua](#-integração-contínua)
-- [API REST](#-api-rest)
-- [Exemplos de Requisição e Resposta](#-exemplos-de-requisição-e-resposta)
-- [Dashboard](#-dashboard)
-- [Capturas de Tela](#-capturas-de-tela)
-- [Diferenciais do Projeto](#-diferenciais-do-projeto)
-- [Evolução Futura](#-evolução-futura)
-- [Projeto Acadêmico](#-projeto-acadêmico)
-- [Autor](#-autor)
+## 📚 Documentação
+
+- [Documentação Técnica](docs/DOCUMENTACAO_TECNICA.md)
+- [Cenários de Teste](docs/cenarios-de-teste.md)
+- [Relatório de Cobertura](docs/RELATORIO_COBERTURA.md)
+
+Com o Back-end em execução, a documentação interativa da API está disponível em:
+
+```text
+http://localhost:3333/api-docs
+```
+
+---
 
 ## 📖 Sobre o Projeto
 
-O Burger Place foi desenvolvido para centralizar processos administrativos de uma hamburgueria em uma aplicação web.
+O Burger Place foi desenvolvido para centralizar processos administrativos de uma hamburgueria.
 
 O sistema permite gerenciar:
 
-- 🍔 Produtos
-- 👥 Clientes
-- 🛒 Pedidos
-- 📈 Indicadores de desempenho
+- produtos;
+- clientes;
+- usuários administrativos;
+- pedidos;
+- status e tempo estimado de pedidos;
+- indicadores de desempenho.
 
-Toda a aplicação utiliza arquitetura cliente-servidor, separando as responsabilidades entre Front-end, API, regras de negócio e persistência de dados.
+A aplicação separa Front-end, API, regras de negócio e persistência de dados em camadas distintas.
 
-Na Atividade 3, essa arquitetura passou a ser validada por testes automatizados e por um pipeline de Integração Contínua.
+---
 
 ## 🧰 Tecnologias Utilizadas
 
-### 🎨 Front-end
+### Front-end
 
 - HTML5
 - CSS3
 - JavaScript ES6+
 - Chart.js
-- Design responsivo
 - Cypress
 
-### ⚙️ Back-end
+### Back-end
 
 - Node.js
 - Express.js
 - Prisma ORM
-- JSON Web Token (JWT)
+- JSON Web Token
 - bcryptjs
 - Jest
 - Supertest
+- Swagger UI Express
+- OpenAPI 3.0
 
-### 🗄 Banco de Dados
+### Banco de Dados
 
 - PostgreSQL
 
-### 🌐 API externa
-
-- BrasilAPI para consulta de CEP
-
-### 🛠 Ferramentas
+### Qualidade e DevOps
 
 - Git
 - GitHub
 - GitHub Actions
-- Prisma Studio
-- Visual Studio Code
-- npm
+- Jest
+- Supertest
+- Cypress
 
-## 🏗 Arquitetura
+---
 
-O sistema utiliza uma arquitetura em camadas:
+## 🏗️ Arquitetura
+
+O sistema utiliza arquitetura cliente-servidor organizada em camadas:
 
 ```text
-                Usuário
-                   │
-                   ▼
-      Front-end (HTML + CSS + JS)
-                   │
-            Requisições REST
-                   │
-                   ▼
-        Node.js + Express API
-                   │
-          Controllers / Services
-                   │
-              Prisma ORM
-                   │
-                   ▼
-             PostgreSQL
+Usuário
+   |
+   v
+Front-end
+HTML + CSS + JavaScript
+   |
+   v
+API REST
+Node.js + Express
+   |
+   v
+Routes
+   |
+   v
+Controllers
+   |
+   v
+Services
+   |
+   v
+Prisma ORM
+   |
+   v
+PostgreSQL
 ```
 
-No Back-end, as responsabilidades são distribuídas entre rotas, controllers, services, middlewares e Prisma ORM.
+Responsabilidades principais:
 
-Essa organização facilita:
+- **Front-end:** interface e interação com o usuário.
+- **Routes:** definição dos endpoints.
+- **Controllers:** recebimento das requisições e estruturação das respostas.
+- **Services:** regras de negócio e validações.
+- **Middlewares:** autenticação e tratamento de erros.
+- **Prisma ORM:** acesso aos dados.
+- **PostgreSQL:** persistência.
 
-- separação de responsabilidades;
-- manutenção do código;
-- reutilização de regras de negócio;
-- tratamento centralizado de erros;
-- testes automatizados;
-- evolução da aplicação.
+Os diagramas completos estão disponíveis em [Documentação Técnica](docs/DOCUMENTACAO_TECNICA.md).
+
+---
 
 ## ✨ Funcionalidades
 
-### 🔐 Autenticação
+### Produtos
 
-- Cadastro de usuário
-- Login com JWT
-- Senha armazenada com hash bcrypt
-- Validação de credenciais
-- Rotas protegidas por Bearer Token
-- Consulta do usuário autenticado
+- cadastro;
+- consulta;
+- edição;
+- exclusão;
+- pesquisa;
+- imagem de produto.
 
-### 🍔 Produtos
+### Clientes
 
-- Cadastro
-- Consulta
-- Edição
-- Exclusão
-- Pesquisa
+- cadastro;
+- consulta;
+- atualização;
+- exclusão;
+- consulta automática de CEP;
+- preenchimento de endereço.
 
-### 👥 Clientes
+### Usuários
 
-- Cadastro
-- Consulta
-- Alteração
-- Exclusão
-- Consulta automática de CEP
-- Preenchimento automático do endereço
+- cadastro;
+- consulta;
+- validação de nome de usuário;
+- geração e verificação de senha.
 
-### 🛒 Pedidos
+### Pedidos
 
-- Criação
-- Consulta
-- Alteração
-- Exclusão
-- Alteração de status
-- Associação de produtos
-- Associação de clientes
+- criação;
+- consulta;
+- exclusão;
+- associação de cliente;
+- associação de produtos;
+- controle de quantidade;
+- alteração de status;
+- alteração de ETA.
 
-### 📊 Dashboard
+Status disponíveis:
 
-O painel administrativo apresenta dados obtidos por meio da API.
+- Em preparação;
+- A caminho;
+- Entregue.
 
-#### Indicadores
+### Dashboard
 
-- Total de pedidos
-- Pedidos em preparação
-- Pedidos a caminho
-- Pedidos entregues
-- Total de produtos
-- Total de clientes
-- Receita total
-- Ticket médio
-- Produto mais vendido
-- Cliente destaque
+Indicadores disponíveis:
 
-#### Gráficos
+- total de pedidos;
+- pedidos em preparação;
+- pedidos a caminho;
+- pedidos entregues;
+- total de produtos;
+- total de clientes;
+- receita total;
+- ticket médio;
+- produto mais vendido;
+- cliente destaque;
+- produtos mais vendidos;
+- atividades recentes.
 
-- Pedidos por status
-- Produtos mais vendidos
-
-### 🌗 Interface
-
-- Tema claro
-- Tema escuro
-- Responsividade
-- Skeleton Loading
+---
 
 ## 📁 Estrutura do Projeto
 
 ```text
 Hamburgueria_Burguer_Place/
-│
+|
 ├── .github/
-│   └── workflows/
-│       └── ci.yml
-│
+|   └── workflows/
+|
 ├── backend/
-│   ├── prisma/
-│   │   ├── migrations/
-│   │   ├── schema.prisma
-│   │   └── seed.js
-│   │
-│   ├── src/
-│   │   ├── config/
-│   │   ├── controllers/
-│   │   ├── middlewares/
-│   │   ├── routes/
-│   │   ├── services/
-│   │   ├── utils/
-│   │   ├── app.js
-│   │   └── server.js
-│   │
-│   ├── tests/
-│   │   ├── fixtures/
-│   │   ├── integration/
-│   │   └── unit/
-│   │
-│   ├── .env.example
-│   ├── jest.config.js
-│   └── package.json
-│
+|   ├── prisma/
+|   |   ├── migrations/
+|   |   ├── schema.prisma
+|   |   └── seed.js
+|   |
+|   ├── src/
+|   |   ├── config/
+|   |   ├── controllers/
+|   |   ├── docs/
+|   |   |   └── openapi.js
+|   |   ├── middlewares/
+|   |   ├── routes/
+|   |   ├── services/
+|   |   ├── utils/
+|   |   ├── app.js
+|   |   └── server.js
+|   |
+|   ├── tests/
+|   |   ├── fixtures/
+|   |   ├── integration/
+|   |   └── unit/
+|   |
+|   ├── .env.example
+|   ├── jest.config.js
+|   └── package.json
+|
 ├── cypress/
-│   └── e2e/
-│       └── hamburgueria.cy.js
-│
+|   └── e2e/
+|
 ├── css/
 ├── js/
 ├── img/
+|
 ├── docs/
-│   └── screenshots/
-│
+|   ├── screenshots/
+|   ├── DOCUMENTACAO_TECNICA.md
+|   ├── RELATORIO_COBERTURA.md
+|   └── cenarios-de-teste.md
+|
 ├── admin.html
 ├── index.html
 ├── cypress.config.js
@@ -281,19 +282,35 @@ Hamburgueria_Burguer_Place/
 └── README.md
 ```
 
+---
+
 ## 💻 Pré-requisitos
 
-Antes de executar o projeto, instale:
+Instale:
 
 - Node.js
 - npm
 - PostgreSQL
 
+---
+
 ## 📦 Instalação
+
+Clone o repositório:
+
+```bash
+git clone https://github.com/euandremas/Hamburgueria_Burguer_Place.git
+```
+
+Acesse o projeto:
+
+```bash
+cd Hamburgueria_Burguer_Place
+```
 
 ### Front-end
 
-Na raiz do projeto:
+Na raiz:
 
 ```bash
 npm install
@@ -301,33 +318,28 @@ npm install
 
 ### Back-end
 
-Acesse a pasta do Back-end:
-
 ```bash
 cd backend
-```
-
-Instale as dependências:
-
-```bash
 npm install
 ```
 
+---
+
 ## ⚙️ Configuração do Ambiente
 
-Crie o arquivo:
+Crie:
 
 ```text
 backend/.env
 ```
 
-Utilize como referência:
+Use como referência:
 
 ```text
 backend/.env.example
 ```
 
-Exemplo de configuração:
+Exemplo:
 
 ```env
 DATABASE_URL="postgresql://usuario:senha@localhost:5432/burger_place"
@@ -337,15 +349,17 @@ PORT=3333
 
 > Não versione o arquivo `.env` com credenciais reais.
 
-## 🗄 Banco de Dados
+---
 
-Os modelos da aplicação são definidos em:
+## 🗄️ Banco de Dados
+
+Os modelos estão definidos em:
 
 ```text
 backend/prisma/schema.prisma
 ```
 
-A aplicação utiliza os modelos:
+Modelos principais:
 
 - User
 - Product
@@ -354,29 +368,31 @@ A aplicação utiliza os modelos:
 - OrderItem
 - Activity
 
-### Executar as migrations
+### Aplicar migrations
 
-Dentro da pasta `backend`:
+Na pasta `backend`:
 
 ```bash
 npx prisma migrate deploy
 ```
 
-### Executar o seed
+### Executar seed
 
 ```bash
 npm run seed
 ```
 
-### Abrir o Prisma Studio
+### Abrir Prisma Studio
 
 ```bash
 npx prisma studio
 ```
 
+---
+
 ## ▶️ Executando o Projeto
 
-O Front-end e o Back-end devem ser executados separadamente.
+Front-end e Back-end devem ser executados separadamente.
 
 ### Back-end
 
@@ -386,123 +402,172 @@ Na pasta `backend`:
 npm run dev
 ```
 
-API disponível em:
+API:
 
 ```text
 http://localhost:3333
 ```
 
-Endpoint de verificação da API:
+Health check:
 
 ```http
 GET /health
 ```
 
+Swagger:
+
+```text
+http://localhost:3333/api-docs
+```
+
 ### Front-end
 
-Na raiz do projeto:
+Na raiz:
 
 ```bash
 npm run serve
 ```
 
-Aplicação disponível em:
+Aplicação:
 
 ```text
 http://localhost:8080
 ```
 
-## 🧪 Testes Automatizados
+---
 
-A Atividade 3 adiciona uma suíte automatizada de testes para validar a qualidade, estabilidade e integração do sistema.
+## 🔐 Autenticação
+
+O sistema utiliza JWT.
+
+Login:
+
+```http
+POST /auth/login
+```
+
+Rotas protegidas exigem:
+
+```http
+Authorization: Bearer <JWT_TOKEN>
+```
+
+As senhas são armazenadas utilizando hash com bcrypt.
+
+---
+
+## 🔗 API REST
+
+### Sistema
+
+| Método | Endpoint | Autenticação | Descrição |
+|---|---|---:|---|
+| GET | `/health` | Não | Verifica disponibilidade da API |
+
+### Autenticação
+
+| Método | Endpoint | Autenticação | Descrição |
+|---|---|---:|---|
+| POST | `/auth/register` | Não | Cadastra usuário |
+| POST | `/auth/login` | Não | Realiza login |
+| GET | `/auth/me` | Sim | Retorna usuário autenticado |
+
+### CEP
+
+| Método | Endpoint | Autenticação | Descrição |
+|---|---|---:|---|
+| GET | `/cep/:cep` | Não | Consulta CEP pela BrasilAPI |
+
+### Produtos
+
+| Método | Endpoint | Autenticação | Descrição |
+|---|---|---:|---|
+| GET | `/products` | Não | Lista produtos |
+| GET | `/products/:id` | Não | Consulta produto |
+| POST | `/products` | Sim | Cadastra produto |
+| PUT | `/products/:id` | Sim | Atualiza produto |
+| DELETE | `/products/:id` | Sim | Exclui produto |
+
+### Clientes
+
+| Método | Endpoint | Autenticação | Descrição |
+|---|---|---:|---|
+| GET | `/customers` | Sim | Lista clientes |
+| GET | `/customers/:id` | Sim | Consulta cliente |
+| POST | `/customers` | Sim | Cadastra cliente |
+| PUT | `/customers/:id` | Sim | Atualiza cliente |
+| DELETE | `/customers/:id` | Sim | Exclui cliente |
+
+### Pedidos
+
+| Método | Endpoint | Autenticação | Descrição |
+|---|---|---:|---|
+| GET | `/orders` | Sim | Lista pedidos |
+| GET | `/orders/:id` | Sim | Consulta pedido |
+| POST | `/orders` | Sim | Cria pedido |
+| PUT | `/orders/:id/status` | Sim | Atualiza status |
+| PUT | `/orders/:id/eta` | Sim | Atualiza ETA |
+| DELETE | `/orders/:id` | Sim | Exclui pedido |
+
+### Dashboard
+
+| Método | Endpoint | Autenticação | Descrição |
+|---|---|---:|---|
+| GET | `/dashboard` | Sim | Retorna indicadores administrativos |
+
+### Usuários
+
+| Método | Endpoint | Autenticação | Descrição |
+|---|---|---:|---|
+| GET | `/users` | Sim | Lista usuários |
+| POST | `/users` | Sim | Cadastra usuário |
+| DELETE | `/users/:id` | Sim | Exclui usuário |
+
+A especificação completa, com parâmetros, exemplos e códigos HTTP, está disponível no Swagger.
+
+---
+
+## 🧪 Testes Automatizados
 
 ### Back-end
 
-Os testes do Back-end utilizam **Jest** e **Supertest**.
-
-Foram implementados:
-
-- testes unitários de regras de negócio;
-- mocks de dependências externas;
-- fixtures para preparação de dados;
-- testes de integração com a API;
-- testes de integração com PostgreSQL;
-- testes de autenticação e JWT;
-- testes dos fluxos de produtos, clientes, pedidos e dashboard.
-
-Para executar os testes:
+Na pasta `backend`:
 
 ```bash
-cd backend
 npm test
 ```
 
-Resultado validado:
+Última execução validada na Atividade 4:
 
 ```text
 Test Suites: 7 passed, 7 total
 Tests:       19 passed, 19 total
 ```
 
-## 📈 Cobertura de Código
-
-Para executar os testes com medição de cobertura:
+### Cobertura
 
 ```bash
-cd backend
 npm run test:coverage
 ```
 
-Resultado obtido no pipeline de Integração Contínua:
+Resultado atual:
 
 | Métrica | Cobertura |
 |---|---:|
-| Statements | 87.63% |
-| Branches | 61.85% |
+| Statements | 87.76% |
+| Branches | 62.88% |
 | Functions | 87.95% |
-| Lines | 88.68% |
+| Lines | 88.81% |
 
-O Jest utiliza limites mínimos automáticos de cobertura. O pipeline é interrompido caso os limites definidos no projeto não sejam atingidos.
+Detalhes:
 
-O relatório HTML é gerado em:
+[Relatório de Cobertura](docs/RELATORIO_COBERTURA.md)
 
-```text
-backend/coverage/
-```
+### Front-end
 
-Para visualizá-lo localmente, abra:
+Os testes de comportamento utilizam Cypress.
 
-```text
-backend/coverage/index.html
-```
-
-A pasta `coverage` não é versionada no Git, pois o relatório pode ser regenerado automaticamente pelos testes.
-
-## 🖥 Testes do Front-end
-
-Os testes de comportamento do Front-end utilizam **Cypress**.
-
-São validados:
-
-- renderização da tela de login;
-- digitação nos campos;
-- interação de clique;
-- exibição e ocultação da senha;
-- autenticação com API mockada.
-
-Para executar os testes, primeiro inicie o Front-end:
-
-```bash
-npm run serve
-```
-
-Em outro terminal, execute:
-
-```bash
-npm test
-```
-
-Resultado validado:
+Na validação registrada na etapa anterior:
 
 ```text
 Tests:   4
@@ -510,336 +575,111 @@ Passing: 4
 Failing: 0
 ```
 
+---
+
 ## 🔄 Integração Contínua
 
-O projeto utiliza **GitHub Actions** por meio do arquivo:
+O projeto utiliza GitHub Actions.
 
-```text
-.github/workflows/ci.yml
-```
+O pipeline contempla:
 
-O pipeline é executado automaticamente a cada `push` ou `pull request` na branch:
+1. instalação das dependências;
+2. inicialização do PostgreSQL;
+3. migrations;
+4. preparação dos dados de teste;
+5. testes do Back-end;
+6. cobertura;
+7. build do Front-end;
+8. testes Cypress;
+9. publicação de artefatos.
 
-```text
-atividade-3
-```
+A execução validada da etapa anterior foi realizada na branch `atividade-3`.
 
-O fluxo automatizado executa:
-
-1. checkout do código;
-2. configuração do Node.js;
-3. inicialização de PostgreSQL em ambiente isolado;
-4. instalação das dependências do Front-end;
-5. instalação das dependências do Back-end;
-6. geração do Prisma Client;
-7. aplicação das migrations;
-8. preparação dos dados de teste;
-9. execução dos testes do Back-end;
-10. verificação automática da cobertura;
-11. publicação do relatório de cobertura;
-12. build do Front-end;
-13. publicação do build como artefato;
-14. inicialização do Front-end;
-15. execução dos testes Cypress.
-
-Ao final do pipeline são disponibilizados os artefatos:
-
-```text
-relatorio-cobertura-backend
-build-frontend
-```
-
-A execução validada da Atividade 3 foi concluída com sucesso no GitHub Actions.
-
-> O deploy automático para ambiente de staging é opcional nesta atividade e não foi configurado nesta versão. O pipeline realiza testes, validação de cobertura e build automatizado.
-
-## 🔗 API REST
-
-### Sistema
-
-| Método | Endpoint | Descrição |
-|---|---|---|
-| GET | `/health` | Verifica se a API está online |
-
-### Autenticação
-
-| Método | Endpoint | Descrição |
-|---|---|---|
-| POST | `/auth/register` | Cadastra um usuário |
-| POST | `/auth/login` | Realiza autenticação |
-| GET | `/auth/me` | Retorna o usuário autenticado |
-
-### Produtos
-
-| Método | Endpoint |
-|---|---|
-| GET | `/products` |
-| POST | `/products` |
-| PUT | `/products/:id` |
-| DELETE | `/products/:id` |
-
-### Clientes
-
-| Método | Endpoint |
-|---|---|
-| GET | `/customers` |
-| POST | `/customers` |
-| PUT | `/customers/:id` |
-| DELETE | `/customers/:id` |
-
-### Pedidos
-
-| Método | Endpoint |
-|---|---|
-| GET | `/orders` |
-| POST | `/orders` |
-| PUT | `/orders/:id` |
-| DELETE | `/orders/:id` |
-
-### Dashboard
-
-| Método | Endpoint |
-|---|---|
-| GET | `/dashboard` |
-
-As rotas protegidas exigem o cabeçalho:
-
-```http
-Authorization: Bearer <JWT_TOKEN>
-```
-
-## 🧪 Exemplos de Requisição e Resposta
-
-### Cadastro de usuário
-
-Requisição:
-
-```http
-POST /auth/register
-Content-Type: application/json
-```
-
-Corpo:
-
-```json
-{
-  "name": "Usuário de Teste",
-  "username": "usuario.teste",
-  "password": "123456"
-}
-```
-
-Resposta esperada:
-
-```json
-{
-  "success": true,
-  "data": {
-    "user": {
-      "id": 1,
-      "name": "Usuário de Teste",
-      "username": "usuario.teste",
-      "role": "admin"
-    },
-    "token": "<JWT_TOKEN>"
-  }
-}
-```
-
-### Login
-
-Requisição:
-
-```http
-POST /auth/login
-Content-Type: application/json
-```
-
-Corpo:
-
-```json
-{
-  "username": "usuario.teste",
-  "password": "123456"
-}
-```
-
-Resposta de sucesso:
-
-```json
-{
-  "success": true,
-  "data": {
-    "user": {
-      "id": 1,
-      "name": "Usuário de Teste",
-      "username": "usuario.teste",
-      "role": "admin"
-    },
-    "token": "<JWT_TOKEN>"
-  }
-}
-```
-
-### Rota protegida
-
-Requisição:
-
-```http
-GET /dashboard
-Authorization: Bearer <JWT_TOKEN>
-```
-
-Exemplo de resposta de sucesso:
-
-```json
-{
-  "success": true,
-  "data": {
-    "totalProducts": 5,
-    "totalCustomers": 3,
-    "totalOrders": 6,
-    "preparingOrders": 1,
-    "onTheWayOrders": 1,
-    "deliveredOrders": 4,
-    "totalRevenue": 409.4,
-    "averageTicket": 68.23333333333333,
-    "bestSeller": {
-      "name": "X-Bacon",
-      "quantity": 6
-    },
-    "topCustomer": {
-      "name": "Ana Silva",
-      "orders": 2
-    }
-  }
-}
-```
-
-> Os valores do dashboard variam conforme os dados existentes no banco.
-
-### Token inválido ou expirado
-
-```json
-{
-  "success": false,
-  "error": {
-    "code": "TOKEN_INVALID",
-    "message": "Token inválido ou expirado."
-  }
-}
-```
-
-### Token ausente
-
-```json
-{
-  "success": false,
-  "error": {
-    "code": "TOKEN_MISSING",
-    "message": "Token de autenticação não informado."
-  }
-}
-```
-
-## 📊 Dashboard
-
-O Dashboard apresenta indicadores administrativos calculados no Back-end a partir dos dados persistidos no PostgreSQL.
-
-Entre os indicadores estão:
-
-- Receita total
-- Ticket médio
-- Produto mais vendido
-- Cliente destaque
-- Produtos cadastrados
-- Clientes cadastrados
-- Pedidos em preparação
-- Pedidos entregues
-- Pedidos a caminho
-
-Os gráficos exibem:
-
-- distribuição dos pedidos por status;
-- produtos mais vendidos.
+---
 
 ## 📸 Capturas de Tela
 
-### Login
+As principais telas estão documentadas em:
 
-![Tela de login](docs/screenshots/login.png)
+[Documentação Técnica](docs/DOCUMENTACAO_TECNICA.md)
 
-## 📌 Diferenciais do Projeto
+Entre as evidências estão:
 
-Além dos requisitos centrais da atividade, o projeto possui:
+- Login
+- Dashboard
+- Produtos
+- Clientes
+- Usuários
+- Pedidos
+- Swagger/OpenAPI
 
-- Dashboard administrativo
-- Chart.js
-- Skeleton Loading
-- Tema claro/escuro
-- Interface responsiva
-- Consulta automática de CEP
-- Organização modular do código
-- Separação entre Front-end e Back-end
-- Testes automatizados no Back-end
-- Testes de comportamento no Front-end
-- Integração real com PostgreSQL durante os testes
-- Cobertura automatizada
-- Pipeline de Integração Contínua
-- Build automatizado
+---
+
+## 🤝 Contribuição e Boas Práticas
+
+Para contribuir com o projeto:
+
+1. crie uma branch específica para a alteração;
+2. faça mudanças pequenas e objetivas;
+3. execute os testes relacionados;
+4. valide o funcionamento antes do commit;
+5. utilize mensagens de commit claras;
+6. não versione arquivos `.env`, credenciais ou tokens;
+7. mantenha a documentação atualizada quando houver alteração de comportamento ou API.
+
+Boas práticas adotadas:
+
+- separação de responsabilidades;
+- validação de entradas;
+- tratamento centralizado de erros;
+- proteção de senhas;
+- autenticação JWT;
+- testes automatizados;
+- documentação de API;
+- versionamento com Git;
+- Integração Contínua.
+
+---
 
 ## 🚀 Evolução Futura
 
-Possíveis evoluções do projeto:
+Possíveis próximos passos:
 
-### 👨‍🍳 Portal do Operador
+- migração gradual do código para TypeScript;
+- evolução do Front-end;
+- ampliação da cobertura de branches;
+- portal específico para operadores;
+- portal do cliente;
+- melhorias de experiência em dispositivos móveis;
+- evolução do processo de deploy e observabilidade.
 
-- Login próprio
-- Gestão operacional de pedidos
-- Controle de produção
+---
 
-### 🍔 Portal do Cliente
+## 🎓 Projeto Acadêmico
 
-- Cadastro
-- Histórico de pedidos
-- Endereços salvos
-- Acompanhamento do pedido
+Projeto desenvolvido para a disciplina **Projetos e Práticas de Extensão III**.
 
-### 📱 Experiência Web
-
-- Evolução do suporte offline
-- Melhorias de instalação
-- Aprimoramentos de experiência em dispositivos móveis
-
-### ☁️ Deploy
-
-- Hospedagem em nuvem
-- Banco PostgreSQL remoto
-- API publicada
-- Deploy automático para ambiente de staging
-
-## 👨‍🎓 Projeto Acadêmico
-
-Este projeto foi desenvolvido como atividade da disciplina **Projetos e Práticas de Extensão III**, aplicando conceitos de:
+Ao longo das atividades foram aplicados conceitos de:
 
 - Desenvolvimento Web
-- Engenharia de Software
-- Arquitetura de Software
 - APIs REST
-- Banco de Dados
-- Arquitetura cliente-servidor
-- Autenticação e autorização
-- Validação de dados
-- Tratamento de erros
-- Testes unitários
-- Testes de integração
-- Mocks e fixtures
-- Cobertura de código
-- Testes de comportamento
+- Node.js
+- Express
+- PostgreSQL
+- Prisma ORM
+- arquitetura cliente-servidor
+- autenticação e autorização
+- validação de dados
+- tratamento de erros
+- testes unitários
+- testes de integração
+- testes de comportamento
+- cobertura de código
 - Integração Contínua
-- Automação com GitHub Actions
-- Responsividade
-- Boas práticas de desenvolvimento
+- documentação técnica
+- OpenAPI e Swagger
+
+---
 
 ## 👨‍💻 Autor
 
